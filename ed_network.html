@@ -1,0 +1,133 @@
+<html>
+<head>
+<title>INFO 3300 - Data-driven Web Applications</title>
+<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<style>
+body { font-family: 'Alegreya Sans', Calibri, sans-serif; }
+svg { border: solid #ccc 1px; }
+</style>
+</head>
+<body>
+
+<!-- Here's an SVG element. Note that in this file it looks like the <div> above. -->
+<svg height="600" width="600">
+  <!-- Visual elements are represented by tags, which have attributes -->
+  <!-- <defs> -->
+    <!-- <marker id="Triangle" viewBox="0 0 10 10" refX="1" refY="5"
+        markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+  </defs> -->
+
+  <!-- <line x1="50" x2="100" y1="10" y2="10" stroke="black" marker-end="url(#Triangle)" /> --> -->
+
+  <!-- <polyline points="10,90 50,80 90,20" fill="none" stroke="black" 
+      stroke-width="2" marker-end="url(#Triangle)" /> -->
+
+<script id="notes">
+
+var svg = d3.select("svg");
+var offset = Number(svg.attr("height")) / 2
+// marker for arrow head
+var marker = svg.append("marker")
+                .attr("id", "Triangle")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 1)
+                .attr("refY", 5)
+                .attr("markerWidth", 10)
+                .attr("markerHeight", 100)
+                .attr("orient", "auto");
+
+marker.append("path").attr("d", "M 0 0 L 10 5 L 0 10 z")
+
+// This function will be applied to all rows. Select three columns, change names, and convert strings to numbers.
+function parseAggregate (line) {
+    return { 
+        User: line["User"],
+        // Negative: line["Negative"],
+        // Neutral: line["Neutral"],
+        // Positive: line["Positive"]
+    };
+};
+
+// create circle of people (circles)
+d3.csv("aggregate_counts.csv", parseAggregate, function (error, data) {
+
+    var numPeople = data.length;
+    var angle = 0;
+    var r = offset - 50;
+    var faces = {}; // maps twitter user to its x and y values in the circle
+    svg.append("circle").attr("cx", offset).attr("cy", offset).attr("r", 10);
+
+    for (i = 0; i < numPeople; i++) {
+        // calculate position in circle
+        var x = Math.cos(angle)*r;
+        var y = Math.sin(angle)*r;
+        // add circles in corresponding places
+        svg.append("circle")
+        .attr("cx", offset)
+        .attr("cy", offset)
+        .attr("r", 10)
+        .attr("transform", "translate(" + x + ", " + y + ")")
+        .style("fill", "purple");
+        // set x and y attributes of corresponding objects
+        faces[data[i].User] = {};
+        faces[data[i].User]["x"] = x + offset;
+        faces[data[i].User]["y"] = y + offset;
+        // move to next angle
+        angle += Math.PI*2 / numPeople;
+    };
+    // console.log(faces);
+
+    var i = 0;
+    // get who each user mentions
+    function parseMentions (line) {
+        var name = line[""];
+        delete line[""];
+        var obj = { 
+            User: name,
+            Mentions: line
+        };
+        i += 1;
+        return obj;
+    };
+
+    d3.csv("all_mentions.csv", parseMentions, function(error, data) {
+
+        // console.log(data);
+        // iterate through each user (person)
+        data.forEach(function (person) {
+            // iterate through each of person's mentions
+            for (var name in person.Mentions) {
+                // add line from person to each mention
+                if (name!=person.User && person.Mentions[name] > 0) {
+                    // console.log(name);
+                    svg.append("line")
+                    .attr("x1", faces[person.User].x)
+                    .attr("y1", faces[person.User].y)
+                    .attr("x2", faces[name].x)
+                    .attr("y2", faces[name].y)
+                    .style("marker-end", "url(#Triangle)")
+                    .style("stroke", "black");
+                }
+            }
+
+        });
+
+    });
+
+    function addImage (cx, cy, r) {
+        
+    }
+
+});
+
+
+</script>
+
+
+</body>
+</html>
