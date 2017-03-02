@@ -13,7 +13,7 @@ svg { border: solid #ccc 1px; }
 <body>
 
 <!-- Here's an SVG element. Note that in this file it looks like the <div> above. -->
-<svg height="600" width="600">
+<svg height="600" width="600"> </svg>
   <!-- Visual elements are represented by tags, which have attributes -->
   <!-- <defs> -->
     <!-- <marker id="Triangle" viewBox="0 0 10 10" refX="1" refY="5"
@@ -26,6 +26,8 @@ svg { border: solid #ccc 1px; }
 
   <!-- <polyline points="10,90 50,80 90,20" fill="none" stroke="black" 
       stroke-width="2" marker-end="url(#Triangle)" /> -->
+
+<svg id="svg2" height = "300" width = "300">
 
 <script id="notes">
 
@@ -119,9 +121,27 @@ d3.csv("aggregate_counts.csv", parseAggregate, function (error, data) {
 
     });
 
-    function addImage (cx, cy, r) {
-        
+    function addAdele (cx, cy, r, svgElement, imageFile) {
+        svgElement.append("image")
+        .attr("xlink:href", "pics/"+imageFile)
+        .attr("height", Math.sqrt(2)*r)
+        .attr("width", Math.sqrt(2)*r)
+        .attr("x", cx - r/(Math.sqrt(2)))
+        .attr("y", cy - r/(Math.sqrt(2)))
+
     }
+
+    svg2 = d3.select("#svg2")
+    svg2.append("circle")
+    .attr("cx", 150)
+    .attr("cy", 150)
+    .attr("r", 50)
+
+    imageFile = "adele.png"
+
+    addAdele(150,150,50, svg2, imageFile)
+
+
 
 });
 
