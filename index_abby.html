@@ -9,22 +9,6 @@ path.link {
   stroke-width: 1.5px;
 }
 
-path.link.twofive {
-  opacity: 0.25;
-}
-
-path.link.fivezero {
-  opacity: 0.50;
-}
-
-path.link.sevenfive {
-  opacity: 0.75;
-}
-
-path.link.onezerozero {
-  opacity: 1.0;
-}
-
 circle {
   fill: #ccc;
   stroke: #fff;
@@ -56,38 +40,16 @@ links.forEach(function(link) {
 });
 
 var width = 960,
-    height = 800;
-//var width = 5000,
-//    height = 5000;
+    height = 500;
 
 var force = d3.layout.force()
     .nodes(d3.values(nodes))
     .links(links)
     .size([width, height])
-    //.linkDistance(60)
-    .linkDistance(400)
+    .linkDistance(60)
     .charge(-300)
     .on("tick", tick)
     .start();
-
-// Set the range
-var  v = d3.scale.linear().range([0, 100]);
-
-// Scale the range of the data
-v.domain([0, d3.max(links, function(d) { return d.value; })]);
-
-// asign a type per value to encode opacity
-links.forEach(function(link) {
-	if (v(link.value) <= 3) {
-		link.type = "twofive";
-	} else if (v(link.value) <= 5 && v(link.value) > 3) {
-		link.type = "fivezero";
-	} else if (v(link.value) <= 10 && v(link.value) > 5) {
-		link.type = "sevenfive";
-	} else if ( v(link.value) > 10) {
-		link.type = "onezerozero";
-	}
-});
 
 var svg = d3.select("body").append("svg")
     .attr("width", width)
@@ -111,7 +73,8 @@ svg.append("svg:defs").selectAll("marker")
 var path = svg.append("svg:g").selectAll("path")
     .data(force.links())
   .enter().append("svg:path")
-    .attr("class", function(d) { return "link " + d.type; })
+//    .attr("class", function(d) { return "link " + d.type; })
+    .attr("class", "link")
     .attr("marker-end", "url(#end)");
 
 // define the nodes
@@ -119,9 +82,7 @@ var node = svg.selectAll(".node")
     .data(force.nodes())
   .enter().append("g")
     .attr("class", "node")
-    //.on("click", click)
-    //.on("dblclick", dblclick)
-    //.call(force.drag);
+    .call(force.drag);
 
 // add the nodes
 node.append("circle")
@@ -149,37 +110,7 @@ function tick() {
 
     node
         .attr("transform", function(d) { 
-		    return "translate(" + d.x + "," + d.y + ")"; });
-}
-
-// action to take on mouse click
-function click() {
-    d3.select(this).select("text").transition()
-        .duration(750)
-        .attr("x", 22)
-        .style("fill", "steelblue")
-        .style("stroke", "lightsteelblue")
-        .style("stroke-width", ".5px")
-        .style("font", "20px sans-serif");
-    d3.select(this).select("circle").transition()
-        .duration(750)
-        .attr("r", 16)
-        .style("fill", "lightsteelblue");
-}
-
-// action to take on mouse double click
-function dblclick() {
-    d3.select(this).select("circle").transition()
-        .duration(750)
-        .attr("r", 6)
-        .style("fill", "#ccc");
-    d3.select(this).select("text").transition()
-        .duration(750)
-        .attr("x", 12)
-        .style("stroke", "none")
-        .style("fill", "black")
-        .style("stroke", "none")
-        .style("font", "10px sans-serif");
+        return "translate(" + d.x + "," + d.y + ")"; });
 }
 
 });
