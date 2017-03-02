@@ -48,9 +48,9 @@ d3.csv("sample_csv_project_attempt2.csv", parseData, function (error, data) {
         var yBar = y + bar_width/2;
         var colors = ["red", "green", "blue", "gray"];
         var i = 0;
+        // add bars
         for (category in user) {
             if (category!="User") {
-                // console.log(user[category]);
                 xEnd = xScale(user[category]);
 
                 svg.append("line")
@@ -73,79 +73,7 @@ d3.csv("sample_csv_project_attempt2.csv", parseData, function (error, data) {
 
         }
 
-        // entertainment
-        // var xEntertainment = xScale(user.Entertainment);
-        // var yEntertainment = y + bar_width/2
-
-        // svg.append("line")
-        // .attr("x1", xScale(0))
-        // .attr("x2", xEntertainment)
-        // .attr("y1", yEntertainment)
-        // .attr("y2", yEntertainment)
-        // .style("stroke", "red")
-        // .style("stroke-width", bar_width);
-
-        // svg.append("text")
-        // .text((user.Entertainment / total_tweets * 100).toFixed(0) + "%")
-        // .attr("x", xEntertainment + text_padding)
-        // .attr("y", yEntertainment)
-        // .attr("alignment-baseline", "middle");
-
-        // // political
-        // var xPolitical = xScale(user.Political);
-        // var yPolitical = yEntertainment + bar_width;
-
-        // svg.append("line")
-        // .attr("x1", xScale(0))
-        // .attr("x2", xPolitical)
-        // .attr("y1", yPolitical)
-        // .attr("y2", yPolitical)
-        // .style("stroke", "green")
-        // .style("stroke-width", bar_width);
-
-        // svg.append("text")
-        // .text((user.Political / total_tweets * 100).toFixed(0) + "%")
-        // .attr("x", xPolitical + text_padding)
-        // .attr("y", yPolitical)
-        // .attr("alignment-baseline", "middle");
-
-        // // news
-        // var xNews = xScale(user.News);
-        // var yNews = yPolitical + bar_width;
-
-        // svg.append("line")
-        // .attr("x1", xScale(0))
-        // .attr("x2", xNews)
-        // .attr("y1", yNews)
-        // .attr("y2", yNews)
-        // .style("stroke", "blue")
-        // .style("stroke-width", bar_width);
-
-        // svg.append("text")
-        // .text((user.News / total_tweets * 100).toFixed(0) + "%")
-        // .attr("x", xNews + text_padding)
-        // .attr("y", yNews)
-        // .attr("alignment-baseline", "middle");
-
-        // // sports
-        // xSports = xScale(user.Sports);
-        // ySports = yNews + bar_width;
-
-        // svg.append("line")
-        // .attr("x1", xScale(0))
-        // .attr("x2", xSports)
-        // .attr("y1", ySports)
-        // .attr("y2", ySports)
-        // .style("stroke", "gray")
-        // .style("stroke-width", bar_width);
-
-        // svg.append("text")
-        // .text((user.Sports / total_tweets * 100).toFixed(0) + "%")
-        // .attr("x", xSports + text_padding)
-        // .attr("y", ySports)
-        // .attr("alignment-baseline", "middle");
-
-        // face
+        // add face
         svg.append("rect")
         .attr("x", padding)
         .attr("y", y)
