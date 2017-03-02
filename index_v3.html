@@ -34,6 +34,13 @@ text {
 <body>
 <h1>INFO 3300 - Project 1</h1>
 <script>
+var all_users = ["@katyperry","@justinbieber","@BarackObama","@taylorswift13","@rihanna","@TheEllenShow",
+   "@ladygaga", "@jtimberlake", "@KimKardashian", "@selenagomez", "@jimmyfallon", "@ArianaGrande", "@ddlovato",
+    "@MileyCyrus", "@kanyewest", "@realDonaldTrump", "@KingJames", "@Oprah", "@Adele" , "@Drake"  ,"@KevinHart4real", "@RyanSeacrest", "@JLo", "@NICKIMINAJ"];
+user_to_idx = {}
+for (i=0; i < all_users.length; i++){
+  user_to_idx[all_users[i].toLowerCase()] = i;
+}
 </script>
 <p id="vis 1">
 <h3> Visualization 1: </h3>
@@ -75,7 +82,8 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
 	var svg_w = svg.attr("width");
 	var svg_h = svg.attr("height");
     all_tweets = tweets;
-    var links = dataProcessingV1(all_tweets, "@katyperry");
+    var center_user = "@katyperry";
+    var links = dataProcessingV1(all_tweets, center_user);
     //console.log(links);
     // syntax copied from source for network
     links.forEach(function(link) {
@@ -88,19 +96,32 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
 	//console.log(nodes);
 	var width = svg_w, height = svg_h;
 	nodes = d3.values(nodes);
+    console.log(nodes[0]);
+    var char_to_pos = {}
+    char_to_pos[center_user.toLowerCase()] = [svg_w/2, svg_h/2];
+    var angle = 0;
+    var r = height/2-75;
+    for (i = 0; i < nodes.length; i++) {
+      if (nodes[i]["name"].toLowerCase() != center_user.toLowerCase()){
+        // calculate position in circle
+        var x = Math.cos(angle)*r;
+        var y = Math.sin(angle)*r;
+        char_to_pos[nodes[i]["name".toLowerCase()]] = [width/2+x,height/2+y];
+        angle += Math.PI*2 / (nodes.length-1);
+      }
+  }
 	for (i=0; i < nodes.length; i++){
-		//nodes[i]["px"] = Math.random()*svg_w;
-		//nodes[i]["x"] = nodes[i]["px"];
-		//nodes[i]["py"] = Math.random()*svg_h;
-		//nodes[i]["y"] = nodes[i]["py"];
-		//nodes[i].fixed = true;
-		//console.log(nodes[i]);
+		nodes[i]["px"] = char_to_pos[nodes[i]["name"].toLowerCase()][0];
+		nodes[i]["x"] = char_to_pos[nodes[i]["name"].toLowerCase()][0];
+		nodes[i]["py"] = char_to_pos[nodes[i]["name"].toLowerCase()][1];
+		nodes[i]["y"] = char_to_pos[nodes[i]["name"].toLowerCase()][1];
+		nodes[i].fixed = true;
 	}
 	var force = d3.layout.force()
     .nodes(nodes)
     .links(links)
     .size([width, height])
-    .linkDistance(400)
+    //.linkDistance(1000)
     .on("tick", tick);
 
     links.forEach(function(link) {
@@ -119,6 +140,7 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
     // define the nodes
 	var node = svg.selectAll(".node")
     .data(force.nodes())
+    //.attr("r",5)
     .enter().append("g")
     .attr("class", "node");
 
@@ -150,10 +172,10 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
     /* Adds curvy lines */
 	function tick() {
     	path.attr("d", function(d) {
-        var dx = d.target.x - d.source.x,
-            dy = d.target.y - d.source.y,
+        var dx = d.target.x - d.source.x, // change these to change the arcs
+            dy = d.target.y - d.source.y, // this too for changing the arc
             dr = Math.sqrt(dx * dx + dy * dy);
-        return "M" + 
+        return "M" +  // all this stuff below changes location of arrows
             d.source.x + "," + 
             d.source.y + "A" + 
             dr + "," + dr + " 0 0,1 " + 
@@ -166,6 +188,8 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
 		   return "translate(" + d.x + "," + d.y + ")"; 
 	    });
     }
+
+
 
 	
 

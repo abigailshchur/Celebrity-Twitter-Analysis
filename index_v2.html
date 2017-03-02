@@ -1,0 +1,268 @@
+<head>
+<title>INFO 3300 - Project 1</title>
+<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+<script src="http://d3js.org/d3.v3.js"></script>
+<style>
+body { font-family: 'Alegreya Sans', Calibri, sans-serif; }
+svg { border: solid #ccc 1px; }
+
+circle {
+  fill: #ccc;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+marker {
+  id: "Triangle";
+  viewBox: "0 0 10 10";
+  refX: 1;
+  refY: 5;
+  markerWidth: 10;
+  markerHeight: 100;
+  orient: "auto";
+}
+</style>
+</head>
+<body>
+<h1>INFO 3300 - Project 1</h1>
+
+<script>
+var all_users = ["@katyperry","@justinbieber","@BarackObama","@taylorswift13","@rihanna","@TheEllenShow",
+   "@ladygaga", "@jtimberlake", "@KimKardashian", "@selenagomez", "@jimmyfallon", "@ArianaGrande", "@ddlovato",
+    "@MileyCyrus", "@kanyewest", "@realDonaldTrump", "@KingJames", "@Oprah", "@Adele" , "@Drake"  ,"@KevinHart4real", "@RyanSeacrest", "@JLo", "@NICKIMINAJ"];
+user_to_idx = {}
+for (i=0; i < all_users.length; i++){
+  user_to_idx[all_users[i].toLowerCase()] = i;
+}
+</script>
+
+<p id="vis 1">
+<h3> Visualization 1: </h3>
+<a href="http://bl.ocks.org/d3noob/5141278"> Where I stole the code </a>
+</br>
+<svg id="svg_v1" height="1000" width="1000"> 
+<svg id="svg_v1_c1" x="10" y="10" height="700" width="700"></svg>
+</svg>
+<script>
+
+function dataProcessingCenter(tweets, center_person) {
+    links_dict = {};
+    links = [];
+  tweets.forEach(function(t){
+    var sender = t.source.toLowerCase();
+    var receiver = t.target.toLowerCase();
+    var val = parseFloat(t.value);
+    var sr = sender+" "+receiver;
+    // can pick specific characters here
+    if(sender == center_person.toLowerCase() || receiver == center_person.toLowerCase()){
+      if (!(sr in links_dict)){
+        links_dict[sr] += 1;
+      }
+      else{
+        links_dict[sr] = 1;
+      }
+    }
+  });
+  /*for (var key in links_dict) { 
+    var people = key.split(" ");
+    links.push({source: people[0], target: people[1], value:links_dict[key]});
+  }*/
+  return links_dict;
+}
+
+function scaleArrowEnding(x1, y1, x2, y2, radius1, radius2, width, height){
+  var dx1=0, dx2=0, dy1=0, dy2=0;
+  var switched = false;
+  if (x1==x2){
+    dx1=0; dx2=0;
+    if (y1<y2){dy1=radius1; dy2=-1*radius2;} else{dy1=-1*radius1; dy2=radius2;}
+  }
+  else if (y1==y2){
+    dy1=0; dy2=0;
+    if (x1>x2){dx1=-1*radius1; dx2=radius2;} else{dx1=radius1; dx2=-1*radius2;}
+  }
+  else if (x1!=x2 && y1!=y2){
+    var switched = false;
+    if (x1 > x2){
+      switched = true;
+      var x1t = x1, y1t = y1, radius1t = radius1;
+      x1 = x2, y1 = y2, radius1 = radius2;
+      radius2 = radius1t, x2 = x1t, y2=y1t;
+    }
+    var dx = Math.abs(x1-x2);
+    var dy = Math.abs(y1-y2);
+    var theta1 = Math.atan(dy/dx);
+    var theta2 = Math.atan(dx/dy);
+    dx1 = radius1*Math.cos(theta1);
+    dx2 = -1*radius2*Math.sin(theta2);
+    if (y1<y2){
+      // c1 is higher up
+      dy1 = radius1*Math.sin(theta1);
+      dy2 = -1*radius2*Math.cos(theta2);
+    }
+    else{
+      // c2 is higher up
+      dy1 = -1*radius1*Math.sin(theta1);
+      dy2 = radius2*Math.cos(theta2);
+    }
+  }
+  if (!switched){
+    return([x1+dx1, y1+dy1, x2+dx2, y2+dy2]);
+  }
+  return([x2+dx2, y2+dy2, x1+dx1, y1+dy1]);
+}
+
+function moveForDuplicate(coords, r1, r2, user1, user2){
+  var offset_c1 = 5;
+  var offset_c2 = 5;
+  var x1 = coords[0], y1 = coords[1], x2 = coords[2], y2 = coords[3];
+  if (user1 > user2){
+    if (x1==x2){y1-=offset_c1; y2-=offset_c1;}
+    if (y1==y2){x1-=offset_c1; x2-=offset_c1;}
+    else{
+      if (x1>x2){
+        x1+=offset_c1;
+        x2-=offset_c2;
+      }
+      else{
+        x1-=offset_c1;
+        x2+=offset_c2;
+      }
+      y1+=offset_c1;
+      y2+=offset_c2;
+    }
+  }
+  else{
+    if (x1==x2){y1+=offset_c1; y2+=offset_c1;}
+    if (y1==y2){x1+=offset_c1; x2+=offset_c1;}
+    else{
+      if (x1>x2){
+        x1+=offset_c1;
+        x2-=offset_c2;
+      }
+      else{
+        x1-=offset_c1;
+        x2+=offset_c2;
+      }
+      y1-=offset_c1;
+      y2-=offset_c2;
+    }
+  }
+  return([x1, y1, x2, y2]); 
+}
+
+
+d3.csv("good_tweets_matrix.csv", function(error, tweets) {
+  var center_person = "@MileyCyrus";
+  var links = dataProcessingCenter(tweets, center_person);
+  var svg = d3.select("#svg_v1_c1");
+  var width = svg.attr("width");
+  var height = svg.attr("height");
+  var center_x = width / 2;
+  var center_y = height / 2;
+  var numPeople = all_users.length;
+  var char_to_radius = {};
+  // marker for arrow head
+  var marker = svg.append("marker")
+                .attr("id", "Triangle")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 1)
+                .attr("refY", 5)
+                .attr("markerWidth", 10)
+                .attr("markerHeight", 100)
+                .attr("orient", "auto");
+  marker.append("path").attr("d", "M 0 0 L 10 5 L 0 10 z");
+  var angle = 0;
+  var r = center_y-75;
+  var faces = {};
+  svg.append("circle")
+  .attr("cx", center_x)
+  .attr("cy", center_y)
+  .attr("r", 50);
+  char_to_radius[center_person.toLowerCase()]=50;
+  svg.append("text")
+  .text(center_person)
+  .attr("text-anchor", "middle")
+  .attr("x", center_x)
+  .attr("y", center_y)
+  .style("font-size", "10pt");
+  // set x and y attributes of corresponding objects
+  faces[center_person] = {};
+  faces[center_person]["x"] = center_x;
+  faces[center_person]["y"] = center_y;
+  for (i = 0; i < numPeople; i++) {
+      if (all_users[i].toLowerCase() != center_person.toLowerCase()){
+        // calculate position in circle
+        var x = Math.cos(angle)*r;
+        var y = Math.sin(angle)*r;
+        // add circles in corresponding places
+        svg.append("circle")
+        .attr("cx", center_x)
+        .attr("cy", center_y)
+        .attr("r", 30)
+        .attr("transform", "translate(" + x + ", " + y + ")");
+        char_to_radius[all_users[i].toLowerCase()] = 30;
+        if (x<0){
+          svg.append("text")
+          .text(all_users[i])
+          .attr("text-anchor", "end")
+          .attr("x", center_x+x)
+          .attr("y", center_y+y)
+          .style("font-size", "10pt");
+        }
+        else{
+          svg.append("text")
+          .text(all_users[i])
+          .attr("text-anchor", "start")
+          .attr("x", center_x+x)
+          .attr("y", center_y+y)
+          .style("font-size", "10pt");
+        }
+        // set x and y attributes of corresponding objects
+        faces[all_users[i]] = {};
+        faces[all_users[i]]["x"] = x + center_x;
+        faces[all_users[i]]["y"] = y + center_y;
+        // move to next angle
+        angle += Math.PI*2 / (numPeople-1);
+      }
+  }
+  console.log(links);
+  for (i=0; i < all_users.length; i++){
+    for (j=0; j < all_users.length; j++){
+      var sender = all_users[i];
+      var receiver = all_users[j];
+      var combined = sender.toLowerCase()+" "+receiver.toLowerCase();
+      var hasDup = receiver.toLowerCase()+" "+sender.toLowerCase() in links;
+      if (combined in links){
+          var scaledCoords = scaleArrowEnding(faces[sender].x, faces[sender].y, faces[receiver].x, faces[receiver].y, char_to_radius[sender.toLowerCase()], char_to_radius[receiver.toLowerCase()], width, height);
+          if (hasDup){
+            scaledCoords = moveForDuplicate(scaledCoords, char_to_radius[sender.toLowerCase()], char_to_radius[receiver.toLowerCase()], sender, receiver);
+          }
+          svg.append("line")
+          .attr("x1", scaledCoords[0])
+          .attr("y1", scaledCoords[1])
+          .attr("x2", scaledCoords[2])
+          .attr("y2", scaledCoords[3])
+          .style("marker-end", "url(#Triangle)")
+          .style("stroke", "black");
+        }
+    }
+  }
+
+});
+</script>
+</p>
+
+<p id="vis 2">
+<h3> Visualization 2: </h3>
+<svg id="svg_v2" height="1000" width="1000"> </svg>
+</p>
+<script>
+var svg = d3.select("#svg_v2");
+
+
+</script>
+
+
+</body>
+</html>
