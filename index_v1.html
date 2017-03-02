@@ -87,12 +87,15 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
 	var width = svg_w, height = svg_h;
 	nodes = d3.values(nodes);
 	for (i=0; i < nodes.length; i++){
-		nodes[i]["px"] = 100.0;
-		nodes[i]["x"] = 100.0;
+		nodes[i]["px"] = Math.random()*svg_w;
+		nodes[i]["x"] = nodes[i]["px"];
+		nodes[i]["py"] = Math.random()*svg_h;
+		nodes[i]["y"] = nodes[i]["py"];
+		nodes[i].fixed = true;
 		console.log(nodes[i]);
 	}
 	var force = d3.layout.force()
-    .nodes(d3.values(nodes))
+    .nodes(nodes)
     .links(links)
     .size([width, height])
     .linkDistance(400)
