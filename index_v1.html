@@ -101,7 +101,7 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
     .links(links)
     .size([width, height])
     .linkDistance(400)
-    .on("end", tick);
+    .on("tick", tick);
 
     links.forEach(function(link) {
 		link.type="linkType1";

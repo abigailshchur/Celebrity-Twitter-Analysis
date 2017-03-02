@@ -140,6 +140,7 @@ d3.csv("good_tweets_matrix.csv", function(error, tweets) {
     // define the nodes
 	var node = svg.selectAll(".node")
     .data(force.nodes())
+    //.attr("r",5)
     .enter().append("g")
     .attr("class", "node");
 
