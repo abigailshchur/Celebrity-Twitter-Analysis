@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>INFO 3300 - Data-driven Web Applications</title>
+<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<style>
+body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
+/*svg { border: solid #ccc 1px; }*/
+</style>
+</head>
+<body>
+
+<h1> Heatmap </h1>
+
+<script id="main">
+    var body = d3.select("body");
+    //var redScale = d3.scaleOrdinal().domain([0,100]).range(['#ffffe0','#ffd2b7','#ffa298','#f3717e','#db445f','#b81a39','#8b0000']);
+    //var blueScale = d3.scale.threshold().domain([0,100]).range(['#e6e6fa','#bac9eb','#8ba9e9','#5d89ea','#4a66e1','#343ed7','#0000cd']);
+    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(['#0000cd','#4169e1','#b0c4de','#d3d3d3','#f08080','#cd5c5c','#b22222']);
+    var circleRadius = d3.scaleLinear().domain([0,60]).range([5,(35/2)]);
+
+
+    var rawData;
+    var x = 0;
+
+    d3.json("reply_sentiment_counts.json", function (error,data) {
+        rawData = data;
+        var usernames = ["@KimKardashian","@justinbieber","@KevinHart4real","@ArianaGrande","@ddlovato","@Oprah","@RyanSeacrest","@TheEllenShow","@jimmykimmel","@jimmyfallon","@BarackObama","@realDonaldTrump","@HillaryClinton","@BernieSanders","@tedcruz","@KingJames","@KDTrey5","@StephenCurry30","@Cristiano","@JohnCena"];
+
+        // main visualization
+        var main = body.append("svg")
+        .attr("id", "main")
+        .attr("width", 1500)
+        .attr("height", 1500);
+
+        var padding = 10;
+        var imageside = 35;
+        var xstart = 50 + padding;
+        var ystart = 0 + padding;
+        var xstart2 = 0 + padding;
+        var ystart2 = 50 + padding;
+        // making axes
+        for (i = 0; i < usernames.length; i++) {
+           
+           main.append("image")
+           .attr("x", xstart )
+           .attr("y", ystart)
+           .attr("height", imageside)
+           .attr("width", imageside)
+           .attr("href", "pics/" + usernames[i].slice(1) + ".png")
+           .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+
+           main.append("image")
+           .attr("x", xstart2)
+           .attr("y", ystart2)
+           .attr("height", imageside)
+           .attr("width", imageside)
+           .attr("href", "pics/" + usernames[i].slice(1) + ".png")
+           .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+
+            xstart = xstart + imageside + padding;
+            ystart2 = ystart2 + imageside + padding;
+
+        }
+
+        //plotting circles
+        var cx = 50 + padding + (imageside / 2);
+        var cy = 50 + padding + (imageside / 2);
+
+        for (j = 0; j < usernames.length; j++){
+            for (k=0; k < usernames.length; k++){
+                var pair = usernames[j] + " " + usernames[k];
+                if (pair in rawData) {
+                    var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
+                    var sentiment = (rawData[pair]["pos"]/totalTweets) - (rawData[pair]["neg"]/totalTweets)
+                    console.log(totalTweets)
+                    //adding circle
+                    main.append("circle")
+                    .attr("cx",cx)
+                    .attr("cy",cy)
+                    .attr("r", circleRadius(totalTweets))
+                    .style("fill", colorScale(sentiment));
+
+                }
+
+                cx = cx + padding + imageside;
+
+            }
+            cx = 50 + padding + (imageside / 2);
+            cy = cy + padding + imageside;
+        }
+
+
+
+
+    });
+
+
+
+</script>
+
+
+</body>
+</html>
