@@ -152,11 +152,11 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .style("fill", "white")
         .style("text-anchor", "middle")
         .style("alignment-baseline", "middle");
-
-        xStart += 2*width + 2*padding;
+        
+        y += width*2 + padding*2;
         if (j % 5 == 4) {
-            y += width*2 + padding*2;
-            xStart = width + padding;
+            xStart += 2*width + 2*padding;
+            y = padding;
         }
         j += 1;
     });
