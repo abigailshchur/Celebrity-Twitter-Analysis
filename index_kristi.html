@@ -14,15 +14,9 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 
 <h1> How the top Twitter users tweet about various topics </h1>
 
-<!-- <svg id="legend" height="200" width="400">
-
-</svg> -->
-
-<!-- <br> -->
-
 <script id="notes">
 
-var width = 100;
+var width = 110;
 var padding = width / 4;
 var bar_width = width / 4;
 var text_padding = 5;
@@ -84,7 +78,6 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .text(categories[i])
         .attr("x", xLegend + legend_width + text_padding)
         .attr("y", yLegend + legend_width/2)
-        // .style("text-anchor", "left")
         .style("alignment-baseline", "middle")
         .style("font-size", 25);
 
@@ -146,7 +139,8 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("y", y)
         .attr("height", width - width/6)
         .attr("width", width)
-        .attr("href", "pics/" + user.User.slice(1) + ".png");
+        .attr("href", "pics/" + user.User.slice(1) + ".png")
+        .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
 
         main.append("text")
         .text(user.User)
