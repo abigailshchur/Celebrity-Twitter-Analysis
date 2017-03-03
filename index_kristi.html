@@ -6,24 +6,29 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
 <style>
-body { font-family: 'Alegreya Sans', Calibri, sans-serif; font-size: 12;}
-svg { border: solid #ccc 1px; }
+body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14;}
+/*svg { border: solid #ccc 1px; }*/
 </style>
 </head>
 <body>
 
-<!-- Here's an SVG element. Note that in this file it looks like the <div> above. -->
-<svg height="600" width="600">
+<h1> How the top Twitter users tweet about various topics </h1>
 
-</svg>
+<!-- <svg id="legend" height="200" width="400">
+
+</svg> -->
+
+<!-- <br> -->
 
 <script id="notes">
 
-var svg = d3.select("svg");
-var width = 100;
-var padding = width/2;
+var width = 150;
+var padding = width/3;
 var bar_width = width / 4;
 var text_padding = 5;
+var body = d3.select("body");
+var colors = ["#17A589", "#2471A3", "#884EA0", "#707B7C"];
+var categories = ["entertainment", "political", "news", "sports"]
 
 function parseData (line) {
     return { 
@@ -38,22 +43,27 @@ function parseData (line) {
 d3.csv("sample_csv_project_attempt2.csv", parseData, function (error, data) {
     console.log(data)
 
+    // create main visualization
+    var main = body.append("svg")
+    .attr("id", "main")
+    .attr("height", padding*(2+data.length) + width*data.length)
+    .attr("width", width*4);
+
     var y = padding;
     
     data.forEach(function (user) {
         var total_tweets = user.Entertainment + user.Political + user.News + user.Sports;
-        var xScale = d3.scaleLinear().domain([0, total_tweets]).range([padding + width, Number(svg.attr("width")) - padding])
+        var xScale = d3.scaleLinear().domain([0, total_tweets]).range([padding + width, Number(main.attr("width")) - padding])
 
         var xEnd;
         var yBar = y + bar_width/2;
-        var colors = ["red", "green", "blue", "gray"];
         var i = 0;
         // add bars
         for (category in user) {
             if (category!="User") {
                 xEnd = xScale(user[category]);
 
-                svg.append("line")
+                main.append("line")
                 .attr("x1", xScale(0))
                 .attr("x2", xEnd)
                 .attr("y1", yBar)
@@ -61,7 +71,7 @@ d3.csv("sample_csv_project_attempt2.csv", parseData, function (error, data) {
                 .style("stroke", colors[i])
                 .style("stroke-width", bar_width);
 
-                svg.append("text")
+                main.append("text")
                 .text((user[category] / total_tweets * 100).toFixed(0) + "%")
                 .attr("x", xEnd + text_padding)
                 .attr("y", yBar)
@@ -74,15 +84,66 @@ d3.csv("sample_csv_project_attempt2.csv", parseData, function (error, data) {
         }
 
         // add face
-        svg.append("rect")
+        var face = main.append("rect")
         .attr("x", padding)
         .attr("y", y)
         .attr("width", width)
         .attr("height", width)
-        .style("fill", "black");
+        .style("fill", "black")
+        .style("opacity", 0.9);
+
+        main.append("image")
+        .attr("x", padding)
+        .attr("y", y)
+        .attr("height", width - width/6)
+        .attr("width", width)
+        .attr("href", "pics/" + user.User.slice(1) + ".png");
+
+        main.append("text")
+        .text(user.User)
+        .attr("x", padding + width/2)
+        .attr("y", y + width - width/12)
+        .style("fill", "white")
+        .style("text-anchor", "middle")
+        .style("alignment-baseline", "middle");
 
         y += width + padding;
     });
+
+    // add legend etc.
+    var legend = body.append("svg")
+    .attr("id", "legend")
+    .attr("height", padding*(2+data.length) + width*data.length)
+    .attr("width", width*4);
+
+    legend.append("text")
+    .text("Key: ")
+    .attr("x", padding)
+    .attr("y", padding)
+    .attr("font-size", 25)
+    .style("alignment-baseline", "hanging");
+
+    // add legend
+    var legend_width = width/6
+    var yLegend = padding + bar_width;
+    for (i=0; i < colors.length; i++) {
+        legend.append("rect")
+        .attr("x", padding + legend_width)
+        .attr("y", yLegend)
+        .attr("height", legend_width)
+        .attr("width", legend_width)
+        .style("fill", colors[i]);
+
+        legend.append("text")
+        .text(categories[i])
+        .attr("x", padding + legend_width + text_padding + legend_width)
+        .attr("y", yLegend + legend_width/2)
+        // .style("text-anchor", "left")
+        .style("alignment-baseline", "middle");
+
+        yLegend += legend_width;
+    }
+
 });
 
 </script>
