@@ -87,7 +87,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
      // create main visualization
     var main = body.append("svg")
     .attr("id", "main")
-    .attr("height", padding*(2+data.length/5) + width*(data.length/5))
+    .attr("height", padding*(2+data.length) + width*(data.length))
     .attr("width", width*15);
     
     data.forEach(function (user) {
@@ -126,7 +126,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         // add face
         xFace = xStart - width;
 
-        var face = main.append("rect")
+        main.append("rect")
         .attr("x", xFace)
         .attr("y", y)
         .attr("width", width)
@@ -142,6 +142,14 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("href", "pics/" + user.User.slice(1) + ".png")
         .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
 
+        var thought = main.append("rect")
+        .attr("x", xFace)
+        .attr("y", y + width)
+        .attr("width", width)
+        .attr("height", width)
+        .style("fill", "black")
+        .style("opacity", 0.85);
+
         main.append("text")
         .text(user.User)
         .attr("x", xFace + width/2)
@@ -152,7 +160,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
 
         xStart += 2*width + 2*padding;
         if (j % 5 == 4) {
-            y += width + padding;
+            y += width*2 + padding*2;
             xStart = width + padding;
         }
         j += 1;
