@@ -142,13 +142,16 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("href", "pics/" + user.User.slice(1) + ".png")
         .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
 
-        var thought = main.append("rect")
+        // thought bubble
+        main.append("rect")
         .attr("x", xFace)
         .attr("y", y + width)
-        .attr("width", width)
+        .attr("width", width*2)
         .attr("height", width)
         .style("fill", "black")
         .style("opacity", 0.85);
+
+        
 
         main.append("text")
         .text(user.User)
