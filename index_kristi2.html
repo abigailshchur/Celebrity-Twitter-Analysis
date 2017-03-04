@@ -25,7 +25,7 @@ var width = 120;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
 var text_padding = colors.length+1;
-var num_hashtags = 25;
+var num_hashtags = 15;
 var body = d3.select("body");
 
 function parseData (line) {
@@ -85,8 +85,9 @@ d3.queue()
 
     // scale for text in word cloud
     data.forEach(function(user) {
+        hashtagData[user.User]=hashtagData[user.User].slice(0, num_hashtags);
         var countExtent = d3.extent(hashtagData[user.User], function (d) { return d.size; });
-        var fontScale = d3.scaleLog().domain(countExtent).range([8,20]);
+        var fontScale = d3.scaleLog().domain(countExtent).range([5,20]);
         user_to_fontScale[user.User] = fontScale; 
     });
 
@@ -162,7 +163,7 @@ d3.queue()
         // word cloud
         d3.layout.cloud().size([width*1.5, width-2*padding])
             .spiral("archimedean")
-            .words(hashtagData[user.User].slice(0, num_hashtags))
+            .words(hashtagData[user.User])
             .rotate(0)
             .padding(1)
             .font('monospace')
