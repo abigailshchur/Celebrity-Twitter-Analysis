@@ -17,17 +17,15 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 <h1> How the top Twitter users tweet about various topics </h1>
 
 <script id="notes">
-var colors = ["#2471A3", "#CB4335", "#17A589", "#CA6F1E", "#707B7C"];
+var colors = ["#2471A3", "#884EA0", "#17A589", "#CB4335", "#707B7C"];
 var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
-var groups = ["Athletes", "Politicians", "Talk Show Hosts", "Celebrities", "News Outlets"]
-cat_to_color= {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
-                "sports": colors[4]};
-cat_to_emoji = {"celeb": "⭐️", "trends": "💁🏻", "political": "💩" , "news": "🌍",
-                "sports": "🏀"}
-var width = 150;
+var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
+                    "sports": colors[4]};
+var width = 120;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
 var text_padding = colors.length+1;
+var num_hashtags = 25;
 var body = d3.select("body");
 
 function parseData (line) {
@@ -40,17 +38,12 @@ function parseData (line) {
         sports: Number(line["sports"]),
     };
 };
-// get hashtag data
-var hashtagData;
-d3.json("user_hashtag_counts.json", function (data) {
-    hashtagData = data;
-    next();
-});
-function next(){
-d3.csv("categorical_counts.csv", parseData, function (error, data) {
-    var y = padding;
-    var xStart = padding + width;
-    var j = 0;
+
+d3.queue()
+.defer(d3.json, "user_hashtag_counts.json")
+.defer(d3.csv, "categorical_counts.csv", parseData)
+.await(function (error, hashtagData, data) {
+
     // add legend etc.
     var legend = body.append("svg")
     .attr("id", "legend")
@@ -92,19 +85,20 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
 
     // scale for text in word cloud
     data.forEach(function(user) {
-        var maxCountHashtag = -1;
-        var minCountHashtag = 2000;
-        hashtagData[user.User].forEach(function (d){if (d.size>maxCountHashtag){maxCountHashtag=d.size}});
-        hashtagData[user.User].forEach(function (d){if (d.size<minCountHashtag){minCountHashtag=d.size}});
-        var fontScale = d3.scaleLog().domain([minCountHashtag, maxCountHashtag]).range([8,20]);
+        var countExtent = d3.extent(hashtagData[user.User], function (d) { return d.size; });
+        var fontScale = d3.scaleLog().domain(countExtent).range([8,20]);
         user_to_fontScale[user.User] = fontScale; 
     });
+
+    var y = padding;
+    var xStart = padding + width;
+    var j = 0;
 
     data.forEach(function (user) {
         var total_tweets = user.celeb + user.trends + user.political + user.news + user.sports;
         var xScale = d3.scaleLinear().domain([0, total_tweets]).range([xStart, xStart + width])
         var xEnd;
-        var yBar = y + width + bar_width/2;
+        var yBar = y + width + bar_width/2 + padding;
         var i = 0;
         // add bars
         for (category in user) {
@@ -118,7 +112,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
                 .style("stroke", colors[i])
                 .style("stroke-width", bar_width);
                 main.append("text")
-                .text((user[category] / total_tweets * 100).toFixed(0) + "%"+cat_to_emoji[category])
+                .text((user[category] / total_tweets * 100).toFixed(0) + "%")
                 .attr("x", xEnd + text_padding)
                 .attr("y", yBar)
                 .attr("alignment-baseline", "middle");
@@ -131,7 +125,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         xFace = xStart - width;
         var face =  main.append("rect")
         .attr("x", xFace)
-        .attr("y", y + width)
+        .attr("y", y + width + padding)
         .attr("width", width)
         .attr("height", width)
         .style("fill", "black")
@@ -140,7 +134,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         // picture of twitter user
         main.append("image")
         .attr("x", xFace)
-        .attr("y", y + width)
+        .attr("y", y + width + padding)
         .attr("height", width - width/6)
         .attr("width", width)
         .attr("href", "pics/" + user.User.slice(1) + ".png")
@@ -150,25 +144,25 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         main.append("text")
         .text(user.User)
         .attr("x", xFace + width/2)
-        .attr("y", y + 2*width - width/12)
+        .attr("y", y + 2*width - width/12 + padding)
         .style("fill", "white")
         .style("text-anchor", "middle")
         .style("alignment-baseline", "middle");
 
         // thought bubble
         main.append("image")
-        .attr("x", xFace+width/2-15)
-        .attr("y", y-30)
+        .attr("x", xFace+2*padding)
+        .attr("y", y-1.5*padding + padding)
         .attr("width", width*2.5)
         .attr("height", 1.5*width)
         .style("opacity", 0.5)
-        .attr("href", "pics/thought_bubble.png")
-        .attr("xlink:href", "pics/thought_bubble.png");
+        .attr("href", "pics/bubble.png")
+        .attr("xlink:href", "pics/bubble.png");
 
-
-        d3.layout.cloud().size([width*2-40, 0.7*width])
+        // word cloud
+        d3.layout.cloud().size([width*1.5, width-2*padding])
             .spiral("archimedean")
-            .words(hashtagData[user.User])
+            .words(hashtagData[user.User].slice(0, num_hashtags))
             .rotate(0)
             .padding(1)
             .font('monospace')
@@ -178,10 +172,13 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
             .start();
 
         function draw(words) {
-                var wStr = xFace+1.3*width;
-                var yStr = y+width/2+5;
+                var wStr = xFace+width+padding;
+                var yStr = y+3*padding;
+
                 main.append("g")
                 .attr("class", "wordcloud")
+                .attr("width", width*1.5)
+                .attr("height", width-2*padding)
                 .attr("transform", "translate("+ wStr.toString() +","+ yStr.toString()+")")
                 .attr("text-anchor", "left")
                 .selectAll("text")
@@ -193,8 +190,8 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
                     return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
                 })
                 .text(function(d) { return d.text; });
-}
-        var area = width*width*2;
+        }
+
         xStart += 2*width + 2*padding;
         if (j % 5 == 4) {
             y += width*2 + padding*2;
@@ -202,7 +199,8 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         }
         j += 1;
     });
-});}
+});
+
 </script>
 
 
