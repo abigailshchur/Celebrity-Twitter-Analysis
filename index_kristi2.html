@@ -16,53 +16,40 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 
 <script id="notes">
 var colors = ["#2471A3", "#CB4335", "#17A589", "#CA6F1E", "#707B7C", "#884EA0"];
-var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
+var categories = ["celebrity entertainment","trends and misc", "election", "law and news", "sports", "other"]
 var groups = ["Athletes", "Politicians", "Talk Show Hosts", "Celebrities", "News Outlets", "Other Companies"]
-var width = 150;
+var width = 120;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
 var text_padding = colors.length+1;
 var body = d3.select("body");
-
 function parseData (line) {
     return { 
         User: line["twitter_id"],
-        celeb: Number(line["celeb"]),
-        trends: Number(line["trends"]),
-        political: Number(line["political"]),
-        news: Number(line["news"]),
-        sports: Number(line["sports"]),
-        other: Number(line["other"])
+        Celeb: Number(line["celeb"]),
+        Misc: Number(line["trends"]),
+        Political: Number(line["political"]),
+        News: Number(line["news"]),
+        Sports: Number(line["sports"]),
+        Other: Number(line["other"])
     };
 };
-
-// get hashtag data
-var hashtagData;
-d3.json("user_hashtag_counts.json", function (data) {
-    hashtagData = data;
-});
-
 d3.csv("categorical_counts.csv", parseData, function (error, data) {
-    console.log(data);
-    console.log(hashtagData);
-
+    console.log(data)
     var y = padding;
     var xStart = padding + width;
     var j = 0;
-
     // add legend etc.
     var legend = body.append("svg")
     .attr("id", "legend")
     .attr("height", bar_width + padding*2)
     .attr("width", width*15);
-
     legend.append("text")
     .text("Key: ")
     .attr("x", padding)
     .attr("y", padding)
     .attr("font-size", 25)
     .style("alignment-baseline", "hanging");
-
     // add legend
     var legend_width = bar_width
     var xLegend = padding + 0.75*width
@@ -74,17 +61,14 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("height", legend_width)
         .attr("width", legend_width)
         .style("fill", colors[i]);
-
         var text = legend.append("text")
         .text(categories[i])
         .attr("x", xLegend + legend_width + text_padding)
         .attr("y", yLegend + legend_width/2)
         .style("alignment-baseline", "middle")
         .style("font-size", 25);
-
         xLegend += legend_width + text.node().getComputedTextLength() + text_padding*8;
     }
-
      // create main visualization
     var main = body.append("svg")
     .attr("id", "main")
@@ -92,9 +76,8 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
     .attr("width", width*15);
     
     data.forEach(function (user) {
-        var total_tweets = user.celeb + user.trends + user.political + user.news + user.sports + user.other;
+        var total_tweets = user.Celeb + user.Misc + user.Political + user.News + user.Sports + user.Other;
         var xScale = d3.scaleLinear().domain([0, total_tweets]).range([xStart, xStart + width])
-
         var xEnd;
         var yBar = y + width + bar_width/2;
         var i = 0;
@@ -102,7 +85,6 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         for (category in user) {
             if (category!="User") {
                 xEnd = xScale(user[category]);
-
                 main.append("line")
                 .attr("x1", xStart)
                 .attr("x2", xEnd)
@@ -110,23 +92,17 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
                 .attr("y2", yBar)
                 .style("stroke", colors[i])
                 .style("stroke-width", bar_width);
-
                 main.append("text")
                 .text((user[category] / total_tweets * 100).toFixed(0) + "%")
                 .attr("x", xEnd + text_padding)
                 .attr("y", yBar)
                 .attr("alignment-baseline", "middle");
-
-
                 yBar += bar_width;
                 i += 1;
             }
-
         }
-
         // add face
         xFace = xStart - width;
-
        var face =  main.append("rect")
         .attr("x", xFace)
         .attr("y", y + width)
@@ -134,7 +110,6 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("height", width)
         .style("fill", "black")
         .style("opacity", 0.85);
-
         main.append("image")
         .attr("x", xFace)
         .attr("y", y + width)
@@ -142,15 +117,6 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("width", width)
         .attr("href", "pics/" + user.User.slice(1) + ".png")
         .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
-
-        main.append("text")
-        .text(user.User)
-        .attr("x", xFace + width/2)
-        .attr("y", y + 2*width - width/12)
-        .style("fill", "white")
-        .style("text-anchor", "middle")
-        .style("alignment-baseline", "middle");
-
         // thought bubble
         main.append("rect")
         .attr("x", xFace)
@@ -159,57 +125,13 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         .attr("height", width)
         .style("fill", "black")
         .style("opacity", 0.85);
-
-        // console.log(hashtagData[user.User])
-        // console.log(user.User)
-        var area = width*width*2;
-        var xWord = xFace;
-        var yWord = y;
-        var wordWidth = width;
-        var wordHeight = width / 5;
-        for (k = 0; k  < hashtagData[user.User].length; k++) {
-
-            var index = categories.findIndex(function (s) { 
-                // console.log(s);
-                // console.log(hashtagData[user.User][k]["category"]);
-                return s.indexOf(hashtagData[user.User][k]["category"]) > -1;
-            });
-
-            console.log(hashtagData[user.User][k]["category"]);
-            console.log(index);
-
-            main.append("rect")
-            .attr("x", xWord)
-            .attr("y", yWord)
-            .attr("width", wordWidth)
-            .attr("height", wordHeight)
-            .style("fill", colors[index])
-            .style("opacity", 0.9)
-            .style("stroke", "black");
-
-            main.append("text")
-            .text(hashtagData[user.User][k]["hashtag"])
-            .attr("x", xWord + text_padding / 2)
-            .attr("y", yWord + text_padding / 2)
-            .style("alignment-baseline", "hanging")
-            .style("fill", "white");
-
-            main.append("text")
-            .text("count: " + hashtagData[user.User][k]["count"])
-            .attr("x", xWord + text_padding / 2)
-            .attr("y", yWord + text_padding*2)
-            .style("alignment-baseline", "hanging")
-            .style("fill", "white");
-
-            
-
-            xWord += wordWidth;
-            if (xWord + wordWidth > xFace + width*2) {
-                xWord = xFace;
-                yWord += wordHeight;
-            }
-        }
-
+        main.append("text")
+        .text(user.User)
+        .attr("x", xFace + width/2)
+        .attr("y", y + 2*width - width/12)
+        .style("fill", "white")
+        .style("text-anchor", "middle")
+        .style("alignment-baseline", "middle");
         xStart += 2*width + 2*padding;
         if (j % 5 == 4) {
             y += width*2 + padding*2;
@@ -217,9 +139,7 @@ d3.csv("categorical_counts.csv", parseData, function (error, data) {
         }
         j += 1;
     });
-
 });
-
 </script>
 
 
