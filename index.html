@@ -8,7 +8,7 @@
 <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script>
 
 <style>
-body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
+body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11; background-color: lightsteelblue}
 /*svg { border: solid #ccc 1px; }*/
 </style>
 </head>
@@ -42,7 +42,7 @@ d3.queue()
 .defer(d3.csv, "categorical_counts.csv", parseData)
 .await(function (error, hashtagData, data) {
     body.append("h1")
-    .text("How the top Twitter users tweet about various topics");
+    .text("How do top Twitter users tweet about various topics?");
 
     // add legend etc.
     var legend = body.append("svg")
@@ -208,7 +208,7 @@ d3.queue()
 <!-- <h1> Heatmap </h1> -->
 
 <script id="heatmap">
-    var heat_colors = ['#922B21','#CD6155', '#F2D7D5', '#E5E7E9','#BDB76B','#6B8E23','#006400'];
+    var heat_colors = ['#922B21','#CD6155', '#F2D7D5', 'gainsboro','#BDB76B','#6B8E23','#006400'];
     var colorScale = d3.scaleLinear().domain([-0.75,-.5,.25,0,.25,.50,.75]).range(heat_colors);
 
     var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
@@ -219,7 +219,7 @@ d3.queue()
 
     d3.json("reply_sentiment_counts.json", function (error,data) {
         body.append("h1")
-        .text("Heatmap");
+        .text("How do celebrities tweet @ each other?");
 
 
         rawData = data;
@@ -325,7 +325,67 @@ d3.queue()
 
 
         //making legend
-        cx = 50 + padding + (imageside/2);
+
+        cx = 45+ padding+ imageside/2;
+        cy = imageside-25;
+        main.append("line")
+        .attr("x1",cx)
+        .attr("x2", cx + 75)
+        .attr("y1", cy)
+        .attr("y2", cy)
+        .style("stroke", "black")
+        .style("stroke-width", 3)
+
+        main.append("text")
+        .attr("x",cx + 5)
+        .attr("y", cy - 10)
+        .text("Tweetee")
+        .style("font-size", 13)
+
+
+         main.append("line")
+        .attr("x1",cx)
+        .attr("x2", cx)
+        .attr("y1", cy)
+        .attr("y2", cy+75)
+        .style("stroke", "black")
+        .style("stroke-width", 3)
+
+
+        main.append("text")
+        .attr("id","tweeter")
+        .attr("x",cx - 60)
+        .attr("y", cy + 35)
+        .text("Tweeter")
+        .style("font-size", 13);
+
+        main.append("line")
+        .attr("x1",cx + 115)
+        .attr("x2", cx + 115)
+        .attr("y1", cy-30)
+        .attr("y2", cy+100)
+        .style("stroke", "gainsboro")
+        .style("stroke-width", 3)
+
+        main.append("line")
+        .attr("x1",cx + 755)
+        .attr("x2", cx + 755)
+        .attr("y1", cy-30)
+        .attr("y2", cy+100)
+        .style("stroke", "gainsboro")
+        .style("stroke-width", 3)
+
+        main.append("line")
+        .attr("x1", imageside/2)
+        .attr("x2", cx + 1300)
+        .attr("y1", cy+120)
+        .attr("y2", cy+120)
+        .style("stroke", "gainsboro")
+        .style("stroke-width", 3)
+
+
+
+        cx = 250 + padding + (imageside/2);
         cy = imageside;
 
         main.append("text")
@@ -344,7 +404,7 @@ d3.queue()
 
 
             legradius += 12;
-            cx = cx + padding + imageside + .5*circleRadius(legradius);
+            cx = cx + imageside + .5*circleRadius(legradius);
         }
 
         main.append("text")
@@ -355,7 +415,7 @@ d3.queue()
         .style("font-size", "13")
 
 
-        cx = cx + 3*imageside
+        cx = cx + 1.5*imageside
 
         main.append("text")
         .attr("x", cx)
