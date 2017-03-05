@@ -21,11 +21,11 @@ var colors = ["#2471A3", "#884EA0", "#17A589", "#CB4335", "#707B7C"];
 var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
 var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
                     "sports": colors[4]};
-var width = 120;
+var width = 150;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
 var text_padding = colors.length+1;
-var num_hashtags = 15;
+var num_hashtags = 50;
 var body = d3.select("body");
 
 function parseData (line) {
@@ -79,7 +79,7 @@ d3.queue()
      // create main visualization
     var main = body.append("svg")
     .attr("id", "main")
-    .attr("height", padding*(2+data.length) + width*(data.length))
+    .attr("height", 2*padding*(data.length/5) + 2*width*(data.length/5))
     .attr("width", width*15);
     var user_to_fontScale = {};
 
@@ -99,7 +99,7 @@ d3.queue()
         var total_tweets = user.celeb + user.trends + user.political + user.news + user.sports;
         var xScale = d3.scaleLinear().domain([0, total_tweets]).range([xStart, xStart + width])
         var xEnd;
-        var yBar = y + width + bar_width/2 + padding;
+        var yBar = y + width + bar_width/2;
         var i = 0;
         // add bars
         for (category in user) {
@@ -126,7 +126,7 @@ d3.queue()
         xFace = xStart - width;
         var face =  main.append("rect")
         .attr("x", xFace)
-        .attr("y", y + width + padding)
+        .attr("y", y + width)
         .attr("width", width)
         .attr("height", width)
         .style("fill", "black")
@@ -135,7 +135,7 @@ d3.queue()
         // picture of twitter user
         main.append("image")
         .attr("x", xFace)
-        .attr("y", y + width + padding)
+        .attr("y", y + width)
         .attr("height", width - width/6)
         .attr("width", width)
         .attr("href", "pics/" + user.User.slice(1) + ".png")
@@ -145,23 +145,23 @@ d3.queue()
         main.append("text")
         .text(user.User)
         .attr("x", xFace + width/2)
-        .attr("y", y + 2*width - width/12 + padding)
+        .attr("y", y + 2*width - width/12)
         .style("fill", "white")
         .style("text-anchor", "middle")
         .style("alignment-baseline", "middle");
 
         // thought bubble
         main.append("image")
-        .attr("x", xFace+2*padding)
-        .attr("y", y-1.5*padding + padding)
+        .attr("x", xFace)
+        .attr("y", y - padding/2)
         .attr("width", width*2.5)
-        .attr("height", 1.5*width)
+        .attr("height", 1.2*width)
         .style("opacity", 0.5)
         .attr("href", "pics/bubble.png")
         .attr("xlink:href", "pics/bubble.png");
 
         // word cloud
-        d3.layout.cloud().size([width*1.5, width-2*padding])
+        d3.layout.cloud().size([width*1.2, width*.6])
             .spiral("archimedean")
             .words(hashtagData[user.User])
             .rotate(0)
@@ -173,12 +173,12 @@ d3.queue()
             .start();
 
         function draw(words) {
-                var wStr = xFace+width+padding;
-                var yStr = y+3*padding;
+                var wStr = xFace+width;
+                var yStr = y + width/2;
 
                 main.append("g")
                 .attr("class", "wordcloud")
-                .attr("width", width*1.5)
+                .attr("width", width)
                 .attr("height", width-2*padding)
                 .attr("transform", "translate("+ wStr.toString() +","+ yStr.toString()+")")
                 .attr("text-anchor", "left")
@@ -195,7 +195,7 @@ d3.queue()
 
         xStart += 2*width + 2*padding;
         if (j % 5 == 4) {
-            y += width*2 + padding*2;
+            y += width*2 + padding;
             xStart = width + padding;
         }
         j += 1;

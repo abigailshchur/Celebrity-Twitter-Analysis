@@ -18,7 +18,8 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
     var body = d3.select("body");
     //var redScale = d3.scaleOrdinal().domain([0,100]).range(['#ffffe0','#ffd2b7','#ffa298','#f3717e','#db445f','#b81a39','#8b0000']);
     //var blueScale = d3.scale.threshold().domain([0,100]).range(['#e6e6fa','#bac9eb','#8ba9e9','#5d89ea','#4a66e1','#343ed7','#0000cd']);
-    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(['#b22222','#cd5c5c', '#f08080', '#d3d3d3', '#b0c4de', '#4169e1','#0000cd']);
+    var colors = ['#C0392B','#D98880', '#F2D7D5', '#E5E7E9', '#A9DFBF', '#27AE60','#196F3D'];
+    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(colors);
 
     var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
 
@@ -106,8 +107,6 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
         .style("text-align", "middle")
         .style("font-size", "13")
 
-
-
         var legradius = 0;
         for (m = 0; m <8; m++) {
             main.append("circle")
@@ -138,17 +137,13 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
         .style("font-size", "13")
 
 
-
-        var legcolor = -.75;
         for (m = 0; m <7; m++) {
             main.append("circle")
             .attr("cx", cx)
             .attr("cy", cy)
             .attr("r", circleRadius(30))
-            .style("fill", colorScale(legcolor))
+            .style("fill", colors[m])
 
-
-            legcolor += .12;
             cx = cx + padding + imageside;
         }
 
