@@ -112,6 +112,8 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
                     var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
                     var sentiment = (rawData[pair]["pos"]/totalTweets) - (rawData[pair]["neg"]/totalTweets)
 
+                    console.log(pair, sentiment)
+
                     //adding circle
                     main.append("circle")
                     .attr("cx",cx)
