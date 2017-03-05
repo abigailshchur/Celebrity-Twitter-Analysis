@@ -16,9 +16,7 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 
 <script id="main">
     var body = d3.select("body");
-    //var redScale = d3.scaleOrdinal().domain([0,100]).range(['#ffffe0','#ffd2b7','#ffa298','#f3717e','#db445f','#b81a39','#8b0000']);
-    //var blueScale = d3.scale.threshold().domain([0,100]).range(['#e6e6fa','#bac9eb','#8ba9e9','#5d89ea','#4a66e1','#343ed7','#0000cd']);
-    var colors = ['#C0392B','#D98880', '#F2D7D5', '#E5E7E9', '#A9DFBF', '#27AE60','#196F3D'];
+    var colors = ['#922B21','#CD6155', '#F2D7D5', '#E5E7E9','#BDB76B','#6B8E23','#006400'];
     var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(colors);
 
     var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
@@ -73,12 +71,17 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
         var cx2 = 50 + padding + (imageside / 2);
         var cy2 = 50 + padding + (imageside / 2) + 3*imageside;
         for (l = 0; l <usernames.length; l++) {
+            var width = 1;
+            if (l==0 || l%5==4) {
+                width = 3;
+            }
+
             main.append("line")
             .attr("x1", cx)
             .attr("x2", cx + (usernames.length-1)*(padding + imageside))
             .attr("y1", cy)
             .attr("y2", cy)
-            .style("stroke-width", 1)
+            .style("stroke-width", width)
             .style("stroke", "lightgray");
 
             main.append("line")
@@ -86,7 +89,7 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
             .attr("x2", cx2)
             .attr("y1", cy2)
             .attr("y2", cy2+(usernames.length -1)*(padding + imageside))
-            .style("stroke-width", 1)
+            .style("stroke-width", width)
             .style("stroke", "lightgray");
 
             cy += (padding + imageside)
