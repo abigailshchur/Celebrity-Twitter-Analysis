@@ -18,8 +18,8 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
     var body = d3.select("body");
     //var redScale = d3.scaleOrdinal().domain([0,100]).range(['#ffffe0','#ffd2b7','#ffa298','#f3717e','#db445f','#b81a39','#8b0000']);
     //var blueScale = d3.scale.threshold().domain([0,100]).range(['#e6e6fa','#bac9eb','#8ba9e9','#5d89ea','#4a66e1','#343ed7','#0000cd']);
-    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(['#b22222','#cd5c5c', '#f08080', '#d3d3d3', '#b0c4de', '#4169e1','#0000cd']);
-
+    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(['#b22222','#cd5c5c','#f08080','#f5f5dc','#bdb76b','#6b8e23','#006400']);
+    //['#b22222','#cd5c5c', '#f08080', '#d3d3d3', '#b0c4de', '#4169e1','#0000cd']
     var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
 
 
@@ -37,6 +37,7 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
         .attr("height", 1500);
 
         var padding = 5;
+        var padding = 7.5;
         var imageside = 35;
         var xstart = 50 + padding;
         var ystart = 0 + padding + 3*imageside;
@@ -66,6 +67,32 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 
         }
 
+        // making lines in graph
+        var cx = 50 + padding + (imageside / 2);
+        var cy = 50 + padding + (imageside / 2) + 3*imageside;
+        var cx2 = 50 + padding + (imageside / 2);
+        var cy2 = 50 + padding + (imageside / 2) + 3*imageside;
+        for (l = 0; l <usernames.length; l++) {
+            main.append("line")
+            .attr("x1", cx)
+            .attr("x2", cx + (usernames.length-1)*(padding + imageside))
+            .attr("y1", cy)
+            .attr("y2", cy)
+            .style("stroke-width", 1)
+            .style("stroke", "lightgray");
+
+            main.append("line")
+            .attr("x1", cx2)
+            .attr("x2", cx2)
+            .attr("y1", cy2)
+            .attr("y2", cy2+(usernames.length -1)*(padding + imageside))
+            .style("stroke-width", 1)
+            .style("stroke", "lightgray");
+
+            cy += (padding + imageside)
+            cx2 += (padding+imageside)
+        }
+
         //plotting circles
         var cx = 50 + padding + (imageside / 2);
         var cy = 50 + padding + (imageside / 2) + 3*imageside;
@@ -76,7 +103,6 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
                 if (pair in rawData) {
                     var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
                     var sentiment = (rawData[pair]["pos"]/totalTweets) - (rawData[pair]["neg"]/totalTweets)
-                    console.log(pair, totalTweets)
 
                     //adding circle
                     main.append("circle")
@@ -138,17 +164,16 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
         .style("font-size", "13")
 
 
-
+        colors = ['#b22222','#cd5c5c','#f08080','#f5f5dc','#bdb76b','#6b8e23','#006400']
         var legcolor = -.75;
         for (m = 0; m <7; m++) {
             main.append("circle")
             .attr("cx", cx)
             .attr("cy", cy)
             .attr("r", circleRadius(30))
-            .style("fill", colorScale(legcolor))
+            .style("fill", colors[m])
 
-
-            legcolor += .12;
+            legcolor += .12
             cx = cx + padding + imageside;
         }
 
