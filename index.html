@@ -209,7 +209,7 @@ d3.queue()
 
 <script id="heatmap">
     var heat_colors = ['#922B21','#CD6155', '#F2D7D5', '#E5E7E9','#BDB76B','#6B8E23','#006400'];
-    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(heat_colors);
+    var colorScale = d3.scaleLinear().domain([-0.75,-.5,.25,0,.25,.50,.75]).range(heat_colors);
 
     var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
 
@@ -293,7 +293,6 @@ d3.queue()
             cx2 += (padding+imageside)
         }
 
-        //plotting circles
         var cx = 50 + padding + (imageside / 2);
         var cy = 50 + padding + (imageside / 2) + 3*imageside;
 
@@ -303,7 +302,8 @@ d3.queue()
                 if (pair in rawData) {
                     var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
                     var sentiment = (rawData[pair]["pos"]/totalTweets) - (rawData[pair]["neg"]/totalTweets)
-                    console.log(pair, totalTweets)
+
+                    console.log(pair, sentiment)
 
                     //adding circle
                     main.append("circle")
@@ -311,6 +311,8 @@ d3.queue()
                     .attr("cy",cy)
                     .attr("r", circleRadius(totalTweets))
                     .style("fill", colorScale(sentiment));
+
+                    console.log(colorScale(sentiment))
 
                 }
 
