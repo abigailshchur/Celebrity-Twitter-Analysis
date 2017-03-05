@@ -1,0 +1,393 @@
+<html>
+<head>
+<title>INFO 3300 - Data-driven Web Applications</title>
+<link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+<script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script>
+
+<style>
+body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
+/*svg { border: solid #ccc 1px; }*/
+</style>
+</head>
+<body>
+
+<h1> How the top Twitter users tweet about various topics </h1>
+
+<script id="main">
+var colors = ["#2471A3", "#884EA0", "#17A589", "#CB4335", "#707B7C"];
+var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
+var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
+                    "sports": colors[4]};
+var width = 150;
+var padding = width / colors.length;
+var bar_width = width / colors.length;
+var text_padding = colors.length+1;
+var num_hashtags = 50;
+var body = d3.select("body");
+
+function parseData (line) {
+    return { 
+        User: line["twitter_id"],
+        celeb: Number(line["celeb"]),
+        trends: Number(line["trends"]),
+        political: Number(line["political"]),
+        news: Number(line["news"]),
+        sports: Number(line["sports"]),
+    };
+};
+
+d3.queue()
+.defer(d3.json, "user_hashtag_counts.json")
+.defer(d3.csv, "categorical_counts.csv", parseData)
+.await(function (error, hashtagData, data) {
+
+    // add legend etc.
+    var legend = body.append("svg")
+    .attr("id", "legend")
+    .attr("height", bar_width + padding*2)
+    .attr("width", width*10 + padding*6);
+    legend.append("text")
+    .text("Key: ")
+    .attr("x", padding)
+    .attr("y", padding)
+    .attr("font-size", 25)
+    .style("alignment-baseline", "hanging");
+
+    // add legend
+    var legend_width = bar_width
+    var xLegend = padding + 0.75*width
+    var yLegend = padding;
+    for (i=0; i < colors.length; i++) {
+        legend.append("rect")
+        .attr("x", xLegend)
+        .attr("y", yLegend)
+        .attr("height", legend_width)
+        .attr("width", legend_width)
+        .style("fill", colors[i]);
+        var text = legend.append("text")
+        .text(categories[i])
+        .attr("x", xLegend + legend_width + text_padding)
+        .attr("y", yLegend + legend_width/2)
+        .style("alignment-baseline", "middle")
+        .style("font-size", 25);
+        xLegend += legend_width + text.node().getComputedTextLength() + text_padding*8;
+    }
+
+     // create main visualization
+    var main = body.append("svg")
+    .attr("id", "main")
+    .attr("height", 2*padding*(data.length/5) + 2*width*(data.length/5))
+    .attr("width", width*10 + padding*6);
+    var user_to_fontScale = {};
+
+    // scale for text in word cloud
+    data.forEach(function(user) {
+        hashtagData[user.User]=hashtagData[user.User].slice(0, num_hashtags);
+        var countExtent = d3.extent(hashtagData[user.User], function (d) { return d.size; });
+        var fontScale = d3.scaleLog().domain(countExtent).range([5,20]);
+        user_to_fontScale[user.User] = fontScale; 
+    });
+
+    var y = padding;
+    var xStart = padding + width;
+    var j = 0;
+
+    data.forEach(function (user) {
+        var total_tweets = user.celeb + user.trends + user.political + user.news + user.sports;
+        var xScale = d3.scaleLinear().domain([0, total_tweets]).range([xStart, xStart + width])
+        var xEnd;
+        var yBar = y + width + bar_width/2;
+        var i = 0;
+        // add bars
+        for (category in user) {
+            if (category!="User") {
+                xEnd = xScale(user[category]);
+                main.append("line")
+                .attr("x1", xStart)
+                .attr("x2", xEnd)
+                .attr("y1", yBar)
+                .attr("y2", yBar)
+                .style("stroke", colors[i])
+                .style("stroke-width", bar_width);
+                main.append("text")
+                .text((user[category] / total_tweets * 100).toFixed(0) + "%")
+                .attr("x", xEnd + text_padding)
+                .attr("y", yBar)
+                .attr("alignment-baseline", "middle");
+                yBar += bar_width;
+                i += 1;
+            }
+        }
+
+        // background for face
+        xFace = xStart - width;
+        var face =  main.append("rect")
+        .attr("x", xFace)
+        .attr("y", y + width)
+        .attr("width", width)
+        .attr("height", width)
+        .style("fill", "black")
+        .style("opacity", 0.85);
+
+        // picture of twitter user
+        main.append("image")
+        .attr("x", xFace)
+        .attr("y", y + width)
+        .attr("height", width - width/6)
+        .attr("width", width)
+        .attr("href", "pics/" + user.User.slice(1) + ".png")
+        .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
+
+        // twitter username 
+        main.append("text")
+        .text(user.User)
+        .attr("x", xFace + width/2)
+        .attr("y", y + 2*width - width/12)
+        .style("fill", "white")
+        .style("text-anchor", "middle")
+        .style("alignment-baseline", "middle");
+
+        // thought bubble
+        main.append("image")
+        .attr("x", xFace)
+        .attr("y", y - padding/2)
+        .attr("width", width*2.5)
+        .attr("height", 1.2*width)
+        .style("opacity", 0.5)
+        .attr("href", "pics/bubble.png")
+        .attr("xlink:href", "pics/bubble.png");
+
+        // word cloud
+        d3.layout.cloud().size([width, width*.6])
+            .spiral("archimedean")
+            .words(hashtagData[user.User])
+            .rotate(0)
+            .padding(1)
+            .font('monospace')
+            .fontSize(function(d) {return user_to_fontScale[user.User](d.size);})
+            .on("end", draw)
+            .text(function(d) { return d.text; })
+            .start();
+
+        function draw(words) {
+                var wStr = xFace+width;
+                var yStr = y + width/2;
+
+                main.append("g")
+                .attr("class", "wordcloud")
+                .attr("width", width)
+                .attr("height", width-2*padding)
+                .attr("transform", "translate("+ wStr.toString() +","+ yStr.toString()+")")
+                .attr("text-anchor", "left")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) {return d.size;})
+                .style("fill", function(d, i) { return cat_to_color[d.category]; })
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });
+        }
+
+        xStart += 2*width + padding;
+        if (j % 5 == 4) {
+            y += width*2 + padding;
+            xStart = width + padding;
+        }
+        j += 1;
+    });
+});
+
+</script>
+
+<!-- <h1> Heatmap </h1> -->
+
+<script id="heatmap">
+    var heat_colors = ['#922B21','#CD6155', '#F2D7D5', '#E5E7E9','#BDB76B','#6B8E23','#006400'];
+    var colorScale = d3.scaleOrdinal().domain([-.75,.75]).range(heat_colors);
+
+    var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
+
+
+    var rawData;
+    var x = 0;
+
+    d3.json("reply_sentiment_counts.json", function (error,data) {
+        body.append("h1")
+        .text("Heatmap");
+
+
+        rawData = data;
+        var usernames = ["@KimKardashian","@justinbieber","@KevinHart4real","@ArianaGrande","@ddlovato","@Oprah","@RyanSeacrest","@TheEllenShow","@jimmykimmel","@jimmyfallon","@BarackObama","@realDonaldTrump","@HillaryClinton","@BernieSanders","@tedcruz","@KingJames","@KDTrey5","@StephenCurry30","@Cristiano","@JohnCena"];
+
+        var padding = 7.5;
+        var imageside = 35;
+        var xstart = 50 + padding;
+        var ystart = 0 + padding + 3*imageside;
+        var xstart2 = 0 + padding;
+        var ystart2 = 50 + padding + 3*imageside;
+
+        // main visualization
+        var main = body.append("svg")
+        .attr("id", "main")
+        .attr("width", imageside*(usernames.length+1) + xstart + padding*(usernames.length+1))
+        .attr("height", imageside*(usernames.length+1) + ystart + padding*(usernames.length+1));
+
+        // making axes
+        for (i = 0; i < usernames.length; i++) {
+           
+           main.append("image")
+           .attr("x", xstart )
+           .attr("y", ystart)
+           .attr("height", imageside)
+           .attr("width", imageside)
+           .attr("href", "pics/" + usernames[i].slice(1) + ".png")
+           .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+
+           main.append("image")
+           .attr("x", xstart2)
+           .attr("y", ystart2)
+           .attr("height", imageside)
+           .attr("width", imageside)
+           .attr("href", "pics/" + usernames[i].slice(1) + ".png")
+           .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+
+            xstart = xstart + imageside + padding;
+            ystart2 = ystart2 + imageside + padding;
+
+        }
+
+        // making lines in graph
+        var cx = 50 + padding + (imageside / 2);
+        var cy = 50 + padding + (imageside / 2) + 3*imageside;
+        var cx2 = 50 + padding + (imageside / 2);
+        var cy2 = 50 + padding + (imageside / 2) + 3*imageside;
+        for (l = 0; l <usernames.length; l++) {
+            var width = 1;
+            if (l==0 || l%5==4) {
+                width = 3;
+            }
+
+            main.append("line")
+            .attr("x1", cx)
+            .attr("x2", cx + (usernames.length-1)*(padding + imageside))
+            .attr("y1", cy)
+            .attr("y2", cy)
+            .style("stroke-width", width)
+            .style("stroke", "lightgray");
+
+            main.append("line")
+            .attr("x1", cx2)
+            .attr("x2", cx2)
+            .attr("y1", cy2)
+            .attr("y2", cy2+(usernames.length -1)*(padding + imageside))
+            .style("stroke-width", width)
+            .style("stroke", "lightgray");
+
+            cy += (padding + imageside)
+            cx2 += (padding+imageside)
+        }
+
+        //plotting circles
+        var cx = 50 + padding + (imageside / 2);
+        var cy = 50 + padding + (imageside / 2) + 3*imageside;
+
+        for (j = 0; j < usernames.length; j++){
+            for (k=0; k < usernames.length; k++){
+                var pair = usernames[j] + " " + usernames[k];
+                if (pair in rawData) {
+                    var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
+                    var sentiment = (rawData[pair]["pos"]/totalTweets) - (rawData[pair]["neg"]/totalTweets)
+                    console.log(pair, totalTweets)
+
+                    //adding circle
+                    main.append("circle")
+                    .attr("cx",cx)
+                    .attr("cy",cy)
+                    .attr("r", circleRadius(totalTweets))
+                    .style("fill", colorScale(sentiment));
+
+                }
+
+                cx = cx + padding + imageside;
+
+            }
+            cx = 50 + padding + (imageside / 2);
+            cy = cy + padding + imageside;
+        }
+
+
+        //making legend
+        cx = 50 + padding + (imageside/2);
+        cy = imageside;
+
+        main.append("text")
+        .attr("x", cx - imageside)
+        .attr("y", cy + padding + imageside)
+        .text("Few Tweets Sent")
+        .style("text-align", "middle")
+        .style("font-size", "13")
+
+        var legradius = 0;
+        for (m = 0; m <8; m++) {
+            main.append("circle")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("r", circleRadius(legradius))
+
+
+            legradius += 12;
+            cx = cx + padding + imageside + .5*circleRadius(legradius);
+        }
+
+        main.append("text")
+        .attr("x", cx - 3* imageside)
+        .attr("y", cy + padding + imageside)
+        .text("Many Tweets Sent")
+        .style("text-align", "middle")
+        .style("font-size", "13")
+
+
+        cx = cx + 3*imageside
+
+        main.append("text")
+        .attr("x", cx - imageside)
+        .attr("y", cy + padding + imageside)
+        .text("Negative Sentiment")
+        .style("text-align", "middle")
+        .style("font-size", "13")
+
+
+        for (m = 0; m <7; m++) {
+            main.append("circle")
+            .attr("cx", cx)
+            .attr("cy", cy)
+            .attr("r", circleRadius(30))
+            .style("fill", heat_colors[m])
+
+            cx = cx + padding + imageside;
+        }
+
+        main.append("text")
+        .attr("x", cx - 3* imageside)
+        .attr("y", cy + padding + imageside)
+        .text("Positive Sentiment")
+        .style("text-align", "middle")
+        .style("font-size", "13")
+
+
+
+
+    });
+
+
+
+</script>
+
+
+</body>
+</html>
