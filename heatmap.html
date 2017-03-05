@@ -67,6 +67,32 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11;}
 
         }
 
+        // making lines in graph
+        var cx = 50 + padding + (imageside / 2);
+        var cy = 50 + padding + (imageside / 2) + 3*imageside;
+        var cx2 = 50 + padding + (imageside / 2);
+        var cy2 = 50 + padding + (imageside / 2) + 3*imageside;
+        for (l = 0; l <usernames.length; l++) {
+            main.append("line")
+            .attr("x1", cx)
+            .attr("x2", cx + (usernames.length-1)*(padding + imageside))
+            .attr("y1", cy)
+            .attr("y2", cy)
+            .style("stroke-width", 1)
+            .style("stroke", "lightgray");
+
+            main.append("line")
+            .attr("x1", cx2)
+            .attr("x2", cx2)
+            .attr("y1", cy2)
+            .attr("y2", cy2+(usernames.length -1)*(padding + imageside))
+            .style("stroke-width", 1)
+            .style("stroke", "lightgray");
+
+            cy += (padding + imageside)
+            cx2 += (padding+imageside)
+        }
+
         //plotting circles
         var cx = 50 + padding + (imageside / 2);
         var cy = 50 + padding + (imageside / 2) + 3*imageside;
