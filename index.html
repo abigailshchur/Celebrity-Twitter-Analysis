@@ -8,16 +8,18 @@
 <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script>
 
 <style>
-body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11; background-color: #EAF2F8}
+body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; background-color: #EAF2F8}
 </style>
 </head>
 <body>
 
 <h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
-<h2> How do top Twitter users tweet about various topics? </h2>
+<h2> How did the top Twitter users tweet about various topics in the past two years? </h2>
 <svg id="svg_vis1_legend"  > </svg>
 <svg id="svg_vis1" width="1000" height="1000"> </svg>
-<h2> How do celebrities tweet @ each other? </h2>
+<h2> How did the top Twitter users tweet @ each other in the past two years? </h2>
+<p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. <br> 
+
 <svg id="svg_vis2_legend" height="10"> </svg>
 <svg id="svg_vis2" width="1000" height="1000"> </svg>
 
@@ -230,7 +232,7 @@ d3.queue()
 
 <script id="heatmap">
 
-var heat_colors = ['#922B21','#CD6155', '#F2D7D5', 'gainsboro','#BDB76B','#6B8E23','#006400'];
+var heat_colors = ['#CB0B01','#CD6155', '#F78C87','#F2E99C','#BDB76B','#6B8E23','#006400'];
 var colorScale = d3.scaleLinear().domain([-0.75,-.5,.25,0,.25,.50,.75]).range(heat_colors);
 var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
 var rawData;
@@ -331,7 +333,78 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                 .attr("cy", cy)
                 .attr("r", circleRadius(totalTweets))
                 .style("fill", colorScale(sentiment));
+
+                if (pair == "@BernieSanders @HillaryClinton" || pair == "@tedcruz @realDonaldTrump" ) {
+                    main.append("circle")
+                    .attr("cx", cx)
+                    .attr("cy", cy)
+                    .attr("r", circleRadius(totalTweets) + 10)
+                    .style("stroke", '#FFA200')
+                    .style("fill", "none")
+                    .style("stroke-width", 3)
+
+                    if (pair == "@BernieSanders @HillaryClinton"){
+                        main.append("line")
+                        .attr("x1", cx + circleRadius(totalTweets))
+                        .attr("x2", cx + circleRadius(totalTweets) + 65)
+                        .attr("y1", cy + circleRadius(totalTweets))
+                        .attr("y2",cy + circleRadius(totalTweets) + 30)
+                        .style("stroke", '#FFA200')
+                        .style("stroke-width", 3)
+
+                         main.append("text")
+                        .attr("x",cx + 90)
+                        .attr("y", cy + circleRadius(totalTweets) + 27)
+                        .text("Senator Bernie Sanders' relationship with ")
+                        .style("font-size", 13)
+
+                         main.append("text")
+                        .attr("x",cx +90)
+                        .attr("y", cy + circleRadius(totalTweets) + 42)
+                        .text("Hillary Clinton shifted from antagonistic to")
+                        .style("font-size", 13)
+
+
+                         main.append("text")
+                        .attr("x",cx +90)
+                        .attr("y", cy + circleRadius(totalTweets) + 57)
+                        .text("supportive after the 2016 primaries.")
+                        .style("font-size", 13)
+                    }
+
+                    if (pair == "@tedcruz @realDonaldTrump"){
+                        main.append("line")
+                        .attr("x1", cx)
+                        .attr("x2", cx + 5)
+                        .attr("y1", cy + circleRadius(totalTweets) + 10)
+                        .attr("y2",cy + circleRadius(totalTweets) + 65)
+                        .style("stroke", '#FFA200')
+                        .style("stroke-width", 3)
+
+                        
+                        main.append("text")
+                        .attr("x",cx -5)
+                        .attr("y", cy + circleRadius(totalTweets) + 77)
+                        .text("Throughout the 2016 G.O.P. primaries,")
+                        .style("font-size", 13)
+
+                         main.append("text")
+                        .attr("x",cx - 5)
+                        .attr("y", cy + circleRadius(totalTweets) + 92)
+                        .text("senator Ted Cruz and Donald Trump maint-")
+                        .style("font-size", 13)
+
+
+                         main.append("text")
+                        .attr("x",cx - 5)
+                        .attr("y", cy + circleRadius(totalTweets) + 107)
+                        .text("ained an especially nasty relationship.")
+                        .style("font-size", 13)
+                    }
+
             }
+            }
+
             cx = cx + padding + imageside;
         }
         cx = 50 + padding + (imageside / 2);
@@ -343,18 +416,35 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     cy = imageside-25;
 
     main.append("line")
-    .attr("x1",cx)
+    .attr("x1",cx-1.5)
     .attr("x2", cx + 75)
     .attr("y1", cy)
     .attr("y2", cy)
     .style("stroke", "black")
     .style("stroke-width", 3)
 
+
     main.append("text")
     .attr("x",cx + 5)
     .attr("y", cy - 10)
     .text("Tweetee")
     .style("font-size", 13)
+
+     main.append("line")
+    .attr("x1",cx-1.5)
+    .attr("x2", cx + 75)
+    .attr("y1", cy+75)
+    .attr("y2", cy+75)
+    .style("stroke", "black")
+    .style("stroke-width", 3)
+
+
+    main.append("text")
+    .attr("x",cx + 5)
+    .attr("y", cy + 90)
+    .text("Tweetee")
+    .style("font-size", 13)
+
 
     main.append("line")
     .attr("x1",cx)
@@ -401,7 +491,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     main.append("text")
     .attr("x", cx)
     .attr("y", cy + padding + imageside)
-    .text("Few Tweets Sent")
+    .text("~0-5 Tweets Sent")
     .style("text-anchor", "middle")
     .style("font-size", "13")
 
@@ -419,7 +509,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     main.append("text")
     .attr("x", cx - padding - imageside - .5*circleRadius(legradius))
     .attr("y", cy + padding + imageside)
-    .text("Many Tweets Sent")
+    .text("~70-80 Tweets Sent")
     .style("text-anchor", "middle")
     .style("font-size", "13")
 
