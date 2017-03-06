@@ -16,12 +16,12 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; backgr
 <h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
 <h2> How did the top Twitter users tweet about various topics in the past two years? </h2>
 <svg id="svg_vis1_legend"  > </svg>
-<svg id="svg_vis1" width="1000" height="1000"> </svg>
+<svg id="svg_vis1"> </svg>
 <h2> How did the top Twitter users tweet @ each other in the past two years? </h2>
 <p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. <br> 
 
 <svg id="svg_vis2_legend" height="10"> </svg>
-<svg id="svg_vis2" width="1000" height="1000"> </svg>
+<svg id="svg_vis2" width="2000" height="1000"> </svg>
 
 <script id="main">
 
@@ -92,7 +92,7 @@ d3.queue()
     var main = d3.select("#svg_vis1")
     .attr("id", "main")
     .attr("height", 2*padding*(data.length/5) + 2*width*(data.length/5))
-    .attr("width", width*10 + padding*6);
+    .attr("width", width*10 + padding*10);
 
     // scale for font size of text in word cloud
     var user_to_fontScale = {};
@@ -219,7 +219,7 @@ d3.queue()
                 .text(function(d) { return d.text; });
         }
 
-        xStart += 2*width + padding;
+        xStart += 2*width + 2*padding;
         if (j % 5 == 4) {
             y += width*2 + padding;
             xStart = width + padding;
