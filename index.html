@@ -27,6 +27,8 @@ var colors = ["#2471A3", "#884EA0", "#17A589", "#CB4335", "#707B7C"];
 var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
 var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
                     "sports": colors[4]};
+var cat_to_emoji = {"celeb": "⭐️", "trends": "💁", "political": "🇺🇸", "news": "📰",
+                    "sports": "⚽️"};                    
 var width = 150;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
@@ -73,7 +75,7 @@ d3.queue()
         .attr("height", legend_width)
         .attr("width", legend_width)
         .style("fill", colors[i]);
-
+        
         var text = legend.append("text")
         .text(categories[i])
         .attr("x", xLegend + legend_width + text_padding)
@@ -123,7 +125,7 @@ d3.queue()
                 .style("stroke-width", bar_width);
 
                 main.append("text")
-                .text((user[category] / total_tweets * 100).toFixed(0) + "%")
+                .text((user[category] / total_tweets * 100).toFixed(0) + "% " + cat_to_emoji[category])
                 .attr("x", xEnd + text_padding)
                 .attr("y", yBar)
                 .attr("alignment-baseline", "middle");
@@ -143,11 +145,21 @@ d3.queue()
         .style("fill", "black")
         .style("opacity", 0.85);
 
+        // total number of tweets 
+        main.append("text")
+        .text("total queried tweets: " + total_tweets)
+        .attr("x", xFace + width/2)
+        .attr("y", y + width + width/10)
+        .style("fill", "white")
+        .style("font-size", width/15)
+        .style("text-anchor", "middle")
+        .style("alignment-baseline", "middle");
+
         // picture of twitter user
         main.append("image")
         .attr("x", xFace)
-        .attr("y", y + width)
-        .attr("height", width - width/6)
+        .attr("y", y + width + width/6)
+        .attr("height", width - width/3)
         .attr("width", width)
         .attr("href", "pics/" + user.User.slice(1) + ".png")
         .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
@@ -165,7 +177,7 @@ d3.queue()
         // thought bubble
         main.append("image")
         .attr("x", xFace)
-        .attr("y", y - padding/2)
+        .attr("y", y - padding/2 - text_padding)
         .attr("width", width*2.5)
         .attr("height", 1.2*width)
         .style("opacity", 0.5)
@@ -186,7 +198,7 @@ d3.queue()
 
         function draw(words) {
                 var wStr = xFace+width;
-                var yStr = y + width/2;
+                var yStr = y + width/2 - text_padding;
 
                 main.append("g")
                 .attr("class", "wordcloud")
@@ -438,6 +450,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("font-size", "13")
 
 });
+
 </script>
+
 </body>
 </html>
