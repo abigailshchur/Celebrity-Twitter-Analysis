@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>INFO 3300 - Data-driven Web Applications</title>
+<title>INFO 3300 - Project 1</title>
 <link href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+Sans" rel="stylesheet">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/styles/default.min.css">
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -9,10 +9,18 @@
 
 <style>
 body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 11; background-color: #EAF2F8}
-/*svg { border: solid #ccc 1px; }*/
 </style>
 </head>
 <body>
+
+<h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
+</br>
+</br>
+<h2> How do top Twitter users tweet about various topics? </h2>
+<svg id="svg_vis1" width="1000" height="1000"> </svg>
+<h2> How do celebrities tweet @ each other? </h2>
+<svg id="svg_vis2_legend" width="1000" height="200"> </svg>
+<svg id="svg_vis2" width="1000" height="1000"> </svg>
 
 <script id="main">
 
@@ -42,12 +50,8 @@ d3.queue()
 .defer(d3.json, "user_hashtag_counts.json")
 .defer(d3.csv, "categorical_counts.csv", parseData)
 .await(function (error, hashtagData, data) {
-    // title
-    body.append("h1")
-    .text("How do top Twitter users tweet about various topics?");
-
     // create legend area
-    var legend = body.append("svg")
+    var legend = d3.select("#svg_vis2_legend")
     .attr("id", "legend")
     .attr("height", bar_width + padding*2)
     .attr("width", width*10 + padding*6);
@@ -82,7 +86,7 @@ d3.queue()
     }
 
      // create main visualization
-    var main = body.append("svg")
+    var main = d3.select("#svg_vis1")
     .attr("id", "main")
     .attr("height", 2*padding*(data.length/5) + 2*width*(data.length/5))
     .attr("width", width*10 + padding*6);
@@ -222,9 +226,6 @@ var rawData;
 var x = 0;
 
 d3.json("reply_sentiment_counts.json", function (error,data) {
-    body.append("h1")
-    .text("How do celebrities tweet @ each other?");
-
     rawData = data;
     var usernames = ["@KimKardashian","@justinbieber","@KevinHart4real","@ArianaGrande","@ddlovato","@Oprah","@RyanSeacrest","@TheEllenShow","@jimmykimmel","@jimmyfallon","@BarackObama","@realDonaldTrump","@HillaryClinton","@BernieSanders","@tedcruz","@KingJames","@KDTrey5","@StephenCurry30","@Cristiano","@JohnCena"];
     var padding = 7.5;
@@ -235,13 +236,14 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     var ystart2 = 50 + padding + 3*imageside;
 
     // main visualization
-    var main = body.append("svg")
+    var main = d3.select("#svg_vis2")
     .attr("id", "main")
     .attr("width", imageside*(usernames.length+1) + xstart + padding*(usernames.length+1))
-    .attr("height", imageside*(usernames.length+1) + ystart + padding*(usernames.length+1));
+    .attr("height", imageside*(usernames.length+1) + ystart + padding*(usernames.length+1)+20);
 
     // add axes
     for (i = 0; i < usernames.length; i++) {
+        // images at the top
        main.append("image")
        .attr("x", xstart )
        .attr("y", ystart)
@@ -250,9 +252,19 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("href", "pics/" + usernames[i].slice(1) + ".png")
        .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
 
+       // images on the left
        main.append("image")
        .attr("x", xstart2)
        .attr("y", ystart2)
+       .attr("height", imageside)
+       .attr("width", imageside)
+       .attr("href", "pics/" + usernames[i].slice(1) + ".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+
+       // images at the bottom
+       main.append("image")
+       .attr("x", xstart)
+       .attr("y", ystart+20*(imageside+padding)+3*padding)
        .attr("height", imageside)
        .attr("width", imageside)
        .attr("href", "pics/" + usernames[i].slice(1) + ".png")
@@ -427,11 +439,6 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("font-size", "13")
 
 });
-
-
-
 </script>
-
-
 </body>
 </html>
