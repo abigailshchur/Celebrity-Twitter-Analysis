@@ -242,7 +242,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     rawData = data;
     var usernames = ["@KimKardashian","@justinbieber","@KevinHart4real","@ArianaGrande","@ddlovato","@Oprah","@RyanSeacrest","@TheEllenShow","@jimmykimmel","@jimmyfallon","@BarackObama","@realDonaldTrump","@HillaryClinton","@BernieSanders","@tedcruz","@KingJames","@KDTrey5","@StephenCurry30","@Cristiano","@JohnCena"];
     var padding = 7.5;
-    var imageside = 60;
+    var imageside = 55;
     var xstart = 50 + padding;
     var ystart = 0 + padding + 3*imageside;
     var xstart2 = 0 + padding;
@@ -277,7 +277,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        // images at the bottom
        main.append("image")
        .attr("x", xstart)
-       .attr("y", ystart+20*(imageside+padding)+3*padding)
+       .attr("y", ystart+20*(imageside+padding)+4*padding)
        .attr("height", imageside)
        .attr("width", imageside)
        .attr("href", "pics/" + usernames[i].slice(1) + ".png")
@@ -470,8 +470,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("stroke-width", 3)
 
     main.append("line")
-    .attr("x1",cx + 755)
-    .attr("x2", cx + 755)
+    .attr("x1",cx + 13*imageside)
+    .attr("x2", cx + 13*imageside)
     .attr("y1", cy-30)
     .attr("y2", cy+100)
     .style("stroke", "gainsboro")
@@ -479,7 +479,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
 
     main.append("line")
     .attr("x1", imageside/2)
-    .attr("x2", cx + 1300)
+    .attr("x2", cx + 22*imageside)
     .attr("y1", cy+120)
     .attr("y2", cy+120)
     .style("stroke", "gainsboro")
@@ -529,7 +529,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
         .attr("r", circleRadius(30))
         .style("fill", heat_colors[m])
 
-        cx = cx + padding + imageside;
+        cx = cx + imageside;
     }
 
     main.append("text")
