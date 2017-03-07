@@ -97,15 +97,15 @@ d3.queue()
         
         var text = legend.append("text")
         .text(categories[i])
-        .attr("x", xLegend + legend_width + text_padding)
-        .attr("y", yLegend + legend_width/2)
+        .attr("x", xLegend + text_padding/2)
+        .attr("y", yLegend + legend_width/2 + text_padding/2)
         .style("alignment-baseline", "middle")
         .style("font-size", 25);
 
-        xLegend += legend_width + text.node().getComputedTextLength() + text_padding*8;
+        xLegend += legend_width + text.node().getComputedTextLength() + text_padding*3;
     }
 
-     // create main visualization
+    // create main visualization
     var main = d3.select("#svg_vis1")
     .attr("id", "main")
     .attr("height", 2*padding*(data.length/5) + 2*width*(data.length/5))
@@ -374,8 +374,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
 
     var cx = 50 + padding + (imageside / 2);
     var cy = 50 + padding + (imageside / 2) + 3*imageside;
-    for (j = 0; j < usernames.length; j++){
-        for (k=0; k < usernames.length; k++){
+    for (j = 0; j < usernames.length; j++) {
+        for (k = 0; k < usernames.length; k++) {
             var pair = usernames[j] + " " + usernames[k];
             if (pair in rawData) {
                 var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
@@ -388,6 +388,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                 .attr("r", circleRadius(totalTweets))
                 .style("fill", colorScale(sentiment));
 
+                // handle special data points
                 if (pair == "@BernieSanders @HillaryClinton" || pair == "@tedcruz @realDonaldTrump" 
                     || pair == "@jimmykimmel @realDonaldTrump") {
                     main.append("circle")
@@ -398,7 +399,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                     .style("fill", "none")
                     .style("stroke-width", 3)
 
-                    if (pair == "@BernieSanders @HillaryClinton"){
+                    if (pair == "@BernieSanders @HillaryClinton") {
                         main.append("line")
                         .attr("x1", cx + circleRadius(totalTweets))
                         .attr("x2", cx + circleRadius(totalTweets) + 65)
@@ -407,27 +408,26 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                         .style("stroke", '#FFA200')
                         .style("stroke-width", 3)
 
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx + 90)
                         .attr("y", cy + circleRadius(totalTweets) + 27)
                         .text("Senator Bernie Sanders' relationship with ")
                         .style("font-size", 13)
 
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx +90)
                         .attr("y", cy + circleRadius(totalTweets) + 42)
                         .text("Hillary Clinton shifted from antagonistic to")
                         .style("font-size", 13)
 
-
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx +90)
                         .attr("y", cy + circleRadius(totalTweets) + 57)
                         .text("supportive after the 2016 primaries.")
                         .style("font-size", 13)
                     }
 
-                    if (pair == "@tedcruz @realDonaldTrump"){
+                    if (pair == "@tedcruz @realDonaldTrump") {
                         main.append("line")
                         .attr("x1", cx)
                         .attr("x2", cx + 5)
@@ -436,27 +436,26 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                         .style("stroke", '#FFA200')
                         .style("stroke-width", 3)
 
-                        
                         main.append("text")
                         .attr("x",cx -5)
                         .attr("y", cy + circleRadius(totalTweets) + 77)
                         .text("Throughout the 2016 G.O.P. primaries,")
                         .style("font-size", 13)
 
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx - 5)
                         .attr("y", cy + circleRadius(totalTweets) + 92)
-                        .text("senator Ted Cruz and Donald Trump maint-")
+                        .text("senator Ted Cruz and Donald Trump main-")
                         .style("font-size", 13)
 
-
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx - 5)
                         .attr("y", cy + circleRadius(totalTweets) + 107)
-                        .text("ained an especially nasty relationship.")
+                        .text("tained an especially nasty relationship.")
                         .style("font-size", 13)
                     }
-                    if (pair == "@jimmykimmel @realDonaldTrump"){
+
+                    if (pair == "@jimmykimmel @realDonaldTrump") {
                         main.append("line")
                         .attr("x1", cx - circleRadius(totalTweets))
                         .attr("x2", cx - circleRadius(totalTweets) - 30)
@@ -465,13 +464,13 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                         .style("stroke", '#FFA200')
                         .style("stroke-width", 3)
 
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx - circleRadius(totalTweets) - 40)
                         .attr("y", cy + circleRadius(totalTweets) + 75)
                         .text("Jimmy Kimmel created many segments centered around")
                         .style("font-size", 13)
 
-                         main.append("text")
+                        main.append("text")
                         .attr("x",cx - circleRadius(totalTweets)-40)
                         .attr("y", cy + circleRadius(totalTweets) + 90)
                         .text("making jokes about Donald Trump and as a result is shown")
@@ -482,12 +481,9 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                         .attr("y", cy + circleRadius(totalTweets) + 105)
                         .text("to have negative sentiment towards him.")
                         .style("font-size", 13)
-
                     }
-
+                }
             }
-            }
-
             cx = cx + padding + imageside;
         }
         cx = 50 + padding + (imageside / 2);
@@ -506,14 +502,13 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("stroke", "black")
     .style("stroke-width", 3)
 
-
     main.append("text")
     .attr("x",cx + 5)
     .attr("y", cy - 10)
     .text("Tweetee")
     .style("font-size", 13)
 
-     main.append("line")
+    main.append("line")
     .attr("x1",cx-1.5)
     .attr("x2", cx + 75)
     .attr("y1", cy+75)
@@ -521,13 +516,11 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("stroke", "black")
     .style("stroke-width", 3)
 
-
     main.append("text")
     .attr("x",cx + 5)
     .attr("y", cy + 90)
     .text("Tweetee")
     .style("font-size", 13)
-
 
     main.append("line")
     .attr("x1",cx)
@@ -571,6 +564,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     cx = 250 + padding + (imageside/2);
     cy = imageside;
 
+    // size legend
     main.append("text")
     .attr("x", cx)
     .attr("y", cy + padding + imageside)
@@ -579,7 +573,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     .style("font-size", "13")
 
     var legradius = 0;
-    for (m = 0; m <8; m++) {
+    for (m = 0; m < 8; m++) {
         main.append("circle")
         .attr("cx", cx)
         .attr("cy", cy)
@@ -598,6 +592,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
 
     cx = cx + 1.5*imageside
 
+    // color legend
     main.append("text")
     .attr("x", cx)
     .attr("y", cy + padding + imageside)
