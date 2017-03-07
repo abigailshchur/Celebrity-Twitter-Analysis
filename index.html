@@ -29,11 +29,13 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; backgr
 <script id="main">
 
 var colors = ["#9e66ab",  "#79c36a","#f1595f", "#599ad3", "#f9a65a"];
-var categories = ["celebrity entertainment", "trends and misc", "political", "law and news", "sports", "other"]
 var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
                     "sports": colors[4]};
 var cat_to_emoji = {"celeb": "⭐️", "trends": "💁", "political": "🇺🇸", "news": "📰",
-                    "sports": "⚽️"};                    
+                    "sports": "⚽️"};     
+var categories = [cat_to_emoji.celeb+" celebrity entertainment", cat_to_emoji.trends+" trends and misc", 
+cat_to_emoji.political+" political", cat_to_emoji.news+" law and news", 
+cat_to_emoji.sports+" sports", "other"]               
 var width = 150;
 var padding = width / colors.length;
 var bar_width = width / colors.length;
