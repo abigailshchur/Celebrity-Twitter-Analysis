@@ -158,6 +158,27 @@ d3.queue()
         .style("alignment-baseline", "middle");
 
         // picture of twitter user
+        // all links used to find images below:
+        // @KingJames: http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/1966.png&w=350&h=254
+        // @KDTrey5: http://kevindurant.com/uploads/home/home-1477604183.png
+        // @StephenCurry30: http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3975.png&w=350&h=254
+        // @Cristiano: https://s-media-cache-ak0.pinimg.com/originals/f0/5d/ab/f05dabe352ab41f67b99591968f57dc9.jpg
+        // @JohnCena: https://storybookstorage.s3.amazonaws.com/items/images/000/296/475/original/20160309-6-1lr7w4e.png?1457536047
+        // @BarackObama: https://transparentbackground.files.wordpress.com/2013/09/002_barack_obama.png
+        // @realDonaldTrump: http://blog.adsy.me/wp-content/uploads/2016/11/podium-confused-trump-transparent.png
+        // @HillaryClinton: http://freepngimages.com/wp-content/uploads/2016/09/hillary-clinton.png
+        // @BernieSanders: http://graphics.latimes.com/static/img/elections_2016/no%20background/bernie-sanders.png
+        // @tedcruz: https://img.clipartfest.com/4a6969afaf80f31883b02922fa250cca_15-january-2016-hiliary-full-body-pic-transparent-background-clipart_720-600.png
+        // @oprah: http://blogs.democratandchronicle.com/unite/files/2013/08/oprah-winfrey.png
+        // @RyanSeacrest: http://ll-media.tmz.com/2013/12/05/celeb-ryan-seacrest-getty-135x180.png
+        // @TheEllenShow: http://assets.goop.com/2014/10/305/ellen-1.jpg
+        // @jimmykimmel: http://3mjcl3ugh3h2mgvcy3zuvl91.wpengine.netdna-cdn.com/wp-content/themes/DudePerfect/assets/images/press/jimmy-kimmel.png
+        // @jimmyfallon: https://fanart.tv/fanart/tv/270261/hdclearart/the-tonight-show-starring-jimmy-fallon-5303e178c528f.png
+        // @KimKardashian: https://peopledotcom.files.wordpress.com/2016/10/kim-kardashian2.jpg?w=1370&h=1996
+        // @JustinBieber:http://cdn.playbuzz.com/cdn/b250eb66-2dcc-4836-a637-166b21bab85a/44b4a74d-a72a-4064-8782-b6a4f555f1e3.jpg
+        // @KevinHart4real: http://www.pngmart.com/image/10649
+        // @ArianaGrande: https://s-media-cache-ak0.pinimg.com/236x/f5/9c/c6/f59cc615df8f0c9b492e7f16e5e4ec8a.jpg
+        // @ddlovato: https://www.directlyrics.com/img/upload/demi-lovato-stone-cold-preview.jpg
         main.append("image")
         .attr("x", xFace)
         .attr("y", y + width + width/6)
@@ -177,6 +198,7 @@ d3.queue()
         .style("alignment-baseline", "middle");
 
         // thought bubble
+        // image source: https://img.clipartfest.com/d6b1158ac0d7b5b1233b8a1e058581d2_thought-bubble-clipart-clipart-thought-bubble-clipart_300-234.png
         main.append("image")
         .attr("x", xFace)
         .attr("y", y - padding/2 - text_padding)
@@ -187,6 +209,7 @@ d3.queue()
         .attr("xlink:href", "pics/bubble.png");
 
         // word cloud
+        // source for how to use library: http://bl.ocks.org/ericcoopey/6382449
         d3.layout.cloud().size([width, width*.6])
             .spiral("archimedean")
             .words(hashtagData[user.User])
