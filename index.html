@@ -14,11 +14,14 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; backgr
 <body>
 
 <h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
+</br> </br>
 <h2> How did the top Twitter users tweet about various topics in the past two years? </h2>
 <svg id="svg_vis1_legend"  > </svg>
-<svg id="svg_vis1"> </svg>
+<svg id="svg_vis1" width="2000" height="1000"> </svg>
 <h2> How did the top Twitter users tweet @ each other in the past two years? </h2>
-<p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. <br> 
+<p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. 
+</p>
+</br> 
 
 <svg id="svg_vis2_legend" height="10"> </svg>
 <svg id="svg_vis2" width="2000" height="1000"> </svg>
@@ -257,7 +260,7 @@ d3.queue()
 
 var heat_colors = ['#CB0B01','#CD6155', '#F78C87','#F2E99C','#BDB76B','#6B8E23','#006400'];
 var colorScale = d3.scaleLinear().domain([-0.75,-.5,.25,0,.25,.50,.75]).range(heat_colors);
-var circleRadius = d3.scaleLinear().domain([0,85]).range([4,(35/1.5)]);
+var circleRadius = d3.scaleSqrt().domain([0,85]).range([4,(35/1.5)]);
 var rawData;
 var x = 0;
 
@@ -357,7 +360,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                 .attr("r", circleRadius(totalTweets))
                 .style("fill", colorScale(sentiment));
 
-                if (pair == "@BernieSanders @HillaryClinton" || pair == "@tedcruz @realDonaldTrump" ) {
+                if (pair == "@BernieSanders @HillaryClinton" || pair == "@tedcruz @realDonaldTrump" 
+                    || pair == "@jimmykimmel @realDonaldTrump") {
                     main.append("circle")
                     .attr("cx", cx)
                     .attr("cy", cy)
@@ -423,6 +427,34 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
                         .attr("y", cy + circleRadius(totalTweets) + 107)
                         .text("ained an especially nasty relationship.")
                         .style("font-size", 13)
+                    }
+                    if (pair == "@jimmykimmel @realDonaldTrump"){
+                        main.append("line")
+                        .attr("x1", cx - circleRadius(totalTweets))
+                        .attr("x2", cx - circleRadius(totalTweets) - 30)
+                        .attr("y1", cy + circleRadius(totalTweets))
+                        .attr("y2",cy + circleRadius(totalTweets) + 60)
+                        .style("stroke", '#FFA200')
+                        .style("stroke-width", 3)
+
+                         main.append("text")
+                        .attr("x",cx - circleRadius(totalTweets) - 40)
+                        .attr("y", cy + circleRadius(totalTweets) + 75)
+                        .text("Jimmy Kimmel created many segments centered around")
+                        .style("font-size", 13)
+
+                         main.append("text")
+                        .attr("x",cx - circleRadius(totalTweets)-40)
+                        .attr("y", cy + circleRadius(totalTweets) + 90)
+                        .text("making jokes about Donald Trump and as a result is shown")
+                        .style("font-size", 13)
+
+                        main.append("text")
+                        .attr("x",cx - circleRadius(totalTweets)-40)
+                        .attr("y", cy + circleRadius(totalTweets) + 105)
+                        .text("to have negative sentiment towards him.")
+                        .style("font-size", 13)
+
                     }
 
             }
