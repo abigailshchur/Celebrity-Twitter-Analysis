@@ -15,19 +15,31 @@ body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; backgr
 
 <h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
 </br> </br>
-<h2> How did the top Twitter users tweet about various topics in the past two years? </h2>
+<h2> Famous Twitter Hashtag Trends (January 2015 - March 2017): </h2>
+<h3> The visualization below looks at the 5 most followed Twitter users in the following groups:</h3>
+<ul>
+  <li>Athletes: </li>
+  <li>Politicians: </li>
+  <li>Talk Show Hosts:</li>
+  <li>Celebrities:</li>
+</ul>
+<h3> Then, their tweets are classified into the following categories: </h3>
+<ul>
+  <li>Celebrity Entertainment: </li>
+  <li>Trends and Misc: </li>
+  <li>Political:</li>
+  <li>Law and News:</li>
+  <li>Sports:</li>
+</ul>
 <svg id="svg_vis1_legend"  > </svg>
 <svg id="svg_vis1" width="2000" height="1000"> </svg>
 <h2> How did the top Twitter users tweet @ each other in the past two years? </h2>
 <p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. 
 </p>
 </br> 
-
-<svg id="svg_vis2_legend" height="10"> </svg>
 <svg id="svg_vis2" width="2000" height="1000"> </svg>
 
 <script id="main">
-
 var colors = ["#9e66ab",  "#79c36a","#f1595f", "#599ad3", "#f9a65a"];
 var cat_to_color = {"celeb": colors[0], "trends": colors[1], "political": colors[2], "news": colors[3],
                     "sports": colors[4]};
@@ -580,7 +592,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     main.append("text")
     .attr("x", cx - padding - imageside - .5*circleRadius(legradius))
     .attr("y", cy + padding + imageside)
-    .text("~70-80 Tweets Sent")
+    .text("~70-90 Tweets Sent")
     .style("text-anchor", "middle")
     .style("font-size", "13")
 
