@@ -188,7 +188,7 @@ d3.queue()
         .attr("height", width - width/3)
         .attr("width", width)
         .attr("href", "pics/" + user.User.slice(1) + ".png")
-        .attr("xlink:href", "pics/" + user.User.slice(1) + ".png");
+        .attr("xlink:href", "pics/" + + user.User.slice(1) + ".png");
 
         // twitter username 
         main.append("text")
@@ -260,7 +260,6 @@ d3.queue()
 
 var heat_colors = ['#CB0B01','#CD6155', '#F78C87','#F2E99C','#BDB76B','#6B8E23','#006400'];
 var colorScale = d3.scaleLinear().domain([-0.75,-.5,.25,0,.25,.50,.75]).range(heat_colors);
-var circleRadius = d3.scaleSqrt().domain([0,85]).range([4,(35/1.5)]);
 var rawData;
 var x = 0;
 
@@ -273,6 +272,21 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     var ystart = 0 + padding + 3*imageside;
     var xstart2 = 0 + padding;
     var ystart2 = 50 + padding + 3*imageside;
+
+    // creating scale for circle Radius
+    var maxRadius = -1;
+    for (j = 0; j < usernames.length; j++){
+        for (k=0; k < usernames.length; k++){
+            var pair = usernames[j] + " " + usernames[k];
+            if (pair in rawData) {
+                var totalTweets = rawData[pair]["neg"] + rawData[pair]["neutral"] + rawData[pair]["pos"];
+                if (maxRadius < totalTweets){
+                    maxRadius = totalTweets;
+                }
+            }
+        }
+    }
+    var circleRadius = d3.scaleSqrt().domain([0,maxRadius]).range([4,(35/1.5)]);
 
     // main visualization
     var main = d3.select("#svg_vis2")
@@ -288,8 +302,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/" + usernames[i].slice(1) + ".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+       .attr("href", "pics/"  + usernames[i].slice(1)  +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
 
        // images on the left
        main.append("image")
@@ -297,8 +311,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart2)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/" + usernames[i].slice(1) + ".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+       .attr("href", "pics/" + usernames[i].slice(1) +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
 
        // images at the bottom
        main.append("image")
@@ -306,8 +320,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart+20*(imageside+padding)+4*padding)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/" + usernames[i].slice(1) + ".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) + ".png")
+       .attr("href", "pics/" + usernames[i].slice(1) +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
 
         xstart = xstart + imageside + padding;
         ystart2 = ystart2 + imageside + padding;
@@ -546,7 +560,7 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
     main.append("text")
     .attr("x", cx)
     .attr("y", cy + padding + imageside)
-    .text("~0-5 Tweets Sent")
+    .text("~1-5 Tweets Sent")
     .style("text-anchor", "middle")
     .style("font-size", "13")
 
