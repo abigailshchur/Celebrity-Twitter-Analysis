@@ -243,8 +243,8 @@ d3.queue()
         .attr("y", y + width + width/6)
         .attr("height", width - width/3)
         .attr("width", width)
-        .attr("href", "pics/" + user.User.slice(1) + ".png")
-        .attr("xlink:href", "pics/" + + user.User.slice(1) + ".png");
+        .attr("href", "pics/" + user.User.slice(1).toLowerCase() + ".png")
+        .attr("xlink:href", "pics/" + user.User.slice(1).toLowerCase() + ".png");
 
         // twitter username 
         main.append("text")
@@ -359,8 +359,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/"  + usernames[i].slice(1)  +".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
+       .attr("href", "pics/"  + usernames[i].slice(1).toLowerCase()  +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1).toLowerCase() +".png")
 
        // images on the left
        main.append("image")
@@ -368,8 +368,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart2)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/" + usernames[i].slice(1) +".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
+       .attr("href", "pics/" + usernames[i].slice(1).toLowerCase() +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1).toLowerCase() +".png")
 
        // images at the bottom
        main.append("image")
@@ -377,8 +377,8 @@ d3.json("reply_sentiment_counts.json", function (error,data) {
        .attr("y", ystart+20*(imageside+padding)+4*padding)
        .attr("height", imageside)
        .attr("width", imageside)
-       .attr("href", "pics/" + usernames[i].slice(1) +".png")
-       .attr("xlink:href", "pics/" + usernames[i].slice(1) +".png")
+       .attr("href", "pics/" + usernames[i].slice(1).toLowerCase() +".png")
+       .attr("xlink:href", "pics/" + usernames[i].slice(1).toLowerCase() +".png")
 
         xstart = xstart + imageside + padding;
         ystart2 = ystart2 + imageside + padding;
