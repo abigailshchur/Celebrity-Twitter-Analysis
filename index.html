@@ -9,35 +9,77 @@
 
 <style>
 body { font-family: 'Century Gothic', Calibri, sans-serif; font-size: 14; background-color: #EAF2F8}
+h1 { 
+    display: block;
+    font-size: 2em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+    text-align: center;
+    font-size: 40px;
+}
+h2 { 
+    display: block;
+    font-size: 2em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+    font-size: 30px;
+}
+h3 { 
+    display: block;
+    font-size: 2em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: normal;
+    font-size: 20px;
+}
+h4 { 
+    display: block;
+    font-size: 2em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: normal;
+    font-size: 15px;
+}
 </style>
 </head>
 <body>
 
-<h1> Trends in Celebrity Twitter Behaviors and Interactions:</h1>
-</br> </br>
+<h1> Trends in Celebrity Twitter Behaviors and Interactions</h1> </br>
 <h2> Famous Twitter Hashtag Trends (January 2015 - March 2017): </h2>
 <h3> The visualization below looks at the 5 most followed Twitter users in the following groups:</h3>
 <ul>
-  <li>Athletes: </li>
-  <li>Politicians: </li>
-  <li>Talk Show Hosts:</li>
-  <li>Celebrities:</li>
+  <li><b>Athletes:</b> Lebron James, Kevin Durant, Stephen Curry, Cristiano Ronaldo, John Cena</li>
+  <li><b>Politicians:</b> Barack Obama, Donald Trump, Hillary Clinton, Bernie Sanders, Ted Cruz</li>
+  <li><b>Talk Show Hosts:</b> Oprah Winfrey, Ryan Seacrest, Ellen DeGeneres, Jimmy Kimmel, Jimmy Fallon</li>
+  <li><b>Celebrities:</b> Kim Kardashian, Justin Bieber, Kevin Hart, Ariana Grande, Demi Lovato</li>
 </ul>
 <h3> Then, their tweets are classified into the following categories: </h3>
 <ul>
-  <li>Celebrity Entertainment: </li>
-  <li>Trends and Misc: </li>
-  <li>Political:</li>
-  <li>Law and News:</li>
-  <li>Sports:</li>
+  <li><b>Celebrity Entertainment:</b> self promotional or hollywood related text</li>
+  <li><b>Trends and Misc:</b> common twitter hashtags or hashtags that do not fit into other categories</li>
+  <li><b>Political:</b> any election or partisan conference related text</li>
+  <li><b>Law and News:</b> legislation in addition to any world or local news </li>
+  <li><b>Sports:</b> sporting events and sport related brand deals</li>
 </ul>
 <svg id="svg_vis1_legend"  > </svg>
 <svg id="svg_vis1" width="2000" height="1000"> </svg>
-<h2> How did the top Twitter users tweet @ each other in the past two years? </h2>
-<p> Here we examine how the top Twitter users interact with one another. For each user, we searched for all instances of @(other user) and recorded said tweets. Then, we ran those tweets through a sentiment analysis. For each interaction, we placed the Tweeter on the left axis and the Tweetee on the top and bottom axes. 
-</p>
+<h2> Famous Twitter Interaction Trends (January 2015 - March 2017):</h2>
+<h4> Here we examine how the top Twitter users interact with one another. The size of the tweets represents the number of tweets from the sender to the recipient. </br>The color represents the average sentiment of the tweet from the sender to the recipient.  
+</h4>
 </br> 
 <svg id="svg_vis2" width="2000" height="1000"> </svg>
+</br></br></br>
+<h3> Created By:  Abigail Shchur (aks236), Edward Mei (ezm4), Kristi Lee (ksl72)</h3>
 
 <script id="main">
 var colors = ["#9e66ab",  "#79c36a","#f1595f", "#599ad3", "#f9a65a"];
@@ -181,20 +223,20 @@ d3.queue()
         // @StephenCurry30: http://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3975.png&w=350&h=254
         // @Cristiano: https://s-media-cache-ak0.pinimg.com/originals/f0/5d/ab/f05dabe352ab41f67b99591968f57dc9.jpg
         // @JohnCena: https://storybookstorage.s3.amazonaws.com/items/images/000/296/475/original/20160309-6-1lr7w4e.png?1457536047
-        // @BarackObama: https://transparentbackground.files.wordpress.com/2013/09/002_barack_obama.png
+        // @BarackObama: http://www.usglc.org/wp-content/themes/usglc/images/impact-2012/masthead-obama.png
         // @realDonaldTrump: http://blog.adsy.me/wp-content/uploads/2016/11/podium-confused-trump-transparent.png
         // @HillaryClinton: http://freepngimages.com/wp-content/uploads/2016/09/hillary-clinton.png
         // @BernieSanders: http://graphics.latimes.com/static/img/elections_2016/no%20background/bernie-sanders.png
         // @tedcruz: https://img.clipartfest.com/4a6969afaf80f31883b02922fa250cca_15-january-2016-hiliary-full-body-pic-transparent-background-clipart_720-600.png
         // @oprah: http://blogs.democratandchronicle.com/unite/files/2013/08/oprah-winfrey.png
-        // @RyanSeacrest: http://ll-media.tmz.com/2013/12/05/celeb-ryan-seacrest-getty-135x180.png
-        // @TheEllenShow: http://assets.goop.com/2014/10/305/ellen-1.jpg
+        // @RyanSeacrest: http://avatars.tout.com/u/c941c27a2b9e30f8ad64b5341c48d5eb/profile/ryan-headshot-for-tout-502-502-10-27-11.jpg
+        // @TheEllenShow: https://s-media-cache-ak0.pinimg.com/736x/63/5b/6b/635b6b15e391024996edea3a88269f6d.jpg
         // @jimmykimmel: http://3mjcl3ugh3h2mgvcy3zuvl91.wpengine.netdna-cdn.com/wp-content/themes/DudePerfect/assets/images/press/jimmy-kimmel.png
-        // @jimmyfallon: https://fanart.tv/fanart/tv/270261/hdclearart/the-tonight-show-starring-jimmy-fallon-5303e178c528f.png
+        // @jimmyfallon: http://media4.s-nbcnews.com/i/newscms/2016_48/1178930/jimmy-fallon-tease-today-161202-021_fba5006940160612d1f352fb9ec787c0.jpg
         // @KimKardashian: https://peopledotcom.files.wordpress.com/2016/10/kim-kardashian2.jpg?w=1370&h=1996
         // @JustinBieber:http://cdn.playbuzz.com/cdn/b250eb66-2dcc-4836-a637-166b21bab85a/44b4a74d-a72a-4064-8782-b6a4f555f1e3.jpg
         // @KevinHart4real: http://www.pngmart.com/image/10649
-        // @ArianaGrande: https://s-media-cache-ak0.pinimg.com/236x/f5/9c/c6/f59cc615df8f0c9b492e7f16e5e4ec8a.jpg
+        // @ArianaGrande: http://img03.deviantart.net/6689/i/2014/283/b/0/ariana_grande_png_by_subiebs-d829wi7.png
         // @ddlovato: https://www.directlyrics.com/img/upload/demi-lovato-stone-cold-preview.jpg
         main.append("image")
         .attr("x", xFace)
@@ -213,6 +255,7 @@ d3.queue()
         .style("font-size", width/10)
         .style("text-anchor", "middle")
         .style("alignment-baseline", "middle");
+
 
         // thought bubble
         // image source: https://img.clipartfest.com/d6b1158ac0d7b5b1233b8a1e058581d2_thought-bubble-clipart-clipart-thought-bubble-clipart_300-234.png
